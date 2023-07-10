@@ -1,7 +1,8 @@
 library embed;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+import 'package:build/build.dart';
+import 'package:embed/src/embed_generator.dart';
+import 'package:source_gen/source_gen.dart';
+
+Builder embedBuilder(BuilderOptions options) =>
+    SharedPartBuilder([EmbedGenerator()], "embed");
