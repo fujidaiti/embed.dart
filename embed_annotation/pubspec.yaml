@@ -1,0 +1,10 @@
+name: embed_annotation
+description: A package exposing annotations for embed.
+version: 0.0.0
+repository: https://github.com/fujidaiti/embed.dart.git
+
+environment:
+  sdk: ">=3.0.5 <4.0.0"
+
+dev_dependencies:
+  lints: ^2.1.1
