@@ -1,0 +1,19 @@
+name: example
+publish_to: none
+
+environment:
+  sdk: ^3.0.5
+
+dependencies:
+  embed_annotation:
+    path: ../embed_annotation
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  lints: ^2.0.0
+  embed:
+    path: ../embed
+
+dependency_overrides:
+  embed_annotation:
+    path: ../embed_annotation
