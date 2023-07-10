@@ -87,7 +87,8 @@ lib/generated_plugin_registrant.dart
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -144,3 +145,5 @@ $RECYCLE.BIN/
 .vscode/
 .idea/
 
+# Generated files
+*.g.dart
