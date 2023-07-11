@@ -6,6 +6,7 @@ import 'package:embed/src/embedders/embedder.dart';
 import 'package:embed/src/utils/primitives.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
 class LiteralEmbedder extends Embedder<EmbedLiteral> {
   const LiteralEmbedder(super.config);
@@ -21,6 +22,7 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
     final fileExtension = p.extension(content.path);
     return switch (fileExtension) {
       ".json" => jsonDecode(stringContent),
+      ".yaml" || ".yml" => loadYaml(stringContent),
       _ => ArgumentError.value(content, "content",
           "$EmbedLiteral does not support '*$fileExtension'"),
     };
