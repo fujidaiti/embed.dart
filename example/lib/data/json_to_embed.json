@@ -1,0 +1,41 @@
+{
+  "app_name": "MyWebApp",
+  "debug_mode": true,
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "myuser",
+    "password": "mypassword",
+    "database_name": "mydatabase"
+  },
+  "logging": {
+    "level": "info",
+    "file": "/var/log/mywebapp.log"
+  },
+  "cache": {
+    "enabled": true,
+    "expiry": 3600
+  },
+  "security": {
+    "secret_key": "somerandomstring",
+    "csrf_protection": true,
+    "cors_allowed_origins": ["https://example.com", "https://api.example.com"],
+    "jwt": {
+      "enabled": true,
+      "expiration": 3600,
+      "refresh_token_expiration": 604800,
+      "secret": "anothersecretkey"
+    }
+  },
+  "email": {
+    "smtp_host": "smtp.example.com",
+    "smtp_port": 587,
+    "smtp_username": "myemail@example.com",
+    "smtp_password": "mypassword",
+    "sender_email": "noreply@example.com"
+  },
+  "api_keys": {
+    "weather_api_key": "myweatherapikey",
+    "payment_gateway_api_key": "mypaymentgatewayapikey"
+  }
+}
