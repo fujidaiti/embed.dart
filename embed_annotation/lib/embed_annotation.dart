@@ -9,3 +9,7 @@ class EmbedStr extends Embed {
   const EmbedStr(super.path, {this.raw = true});
   final bool raw;
 }
+
+class EmbedLiteral extends Embed {
+  const EmbedLiteral(super.path);
+}
