@@ -1,3 +1,5 @@
+import 'package:recase/recase.dart';
+
 String literalOfInt(int value) => value.toString();
 
 String literalOfDouble(double value) => value.toString();
@@ -44,7 +46,7 @@ String literalOfRecord(Map<dynamic, dynamic> value) {
   assert(canConvertToRecord(value));
   final entries = [
     for (final MapEntry(:key, :value) in value.entries)
-      "$key:${literalOf(value)}"
+      "${(key as String).camelCase}:${literalOf(value)}"
   ].join(",");
   return "($entries)";
 }
