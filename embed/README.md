@@ -9,5 +9,11 @@ Working in progress :construction:
 Clear the cache and run `build_runner` again.
 
 ```shell
+dart pub run build_runner clean && dart pub run build_runner build
+```
+
+If you are still having the problem, try this:
+
+```shell
 flutter clean && dart pub run build_runner build
 ```
