@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:embed/src/embedders/embedder.dart';
-import 'package:embed/src/primitives/primitives.dart';
+import 'package:embed/src/embedders/primitives/primitives.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:toml/toml.dart';

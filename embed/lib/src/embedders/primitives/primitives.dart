@@ -1,5 +1,5 @@
-import 'package:embed/src/primitives/dart_primitives.dart';
-import 'package:embed/src/primitives/toml_primitives.dart' as toml;
+import 'package:embed/src/embedders/primitives/dart_primitives.dart';
+import 'package:embed/src/embedders/primitives/toml_primitives.dart' as toml;
 import 'package:toml/toml.dart';
 
 String literalOf(dynamic value) {

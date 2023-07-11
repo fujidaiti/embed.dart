@@ -1,4 +1,4 @@
-import 'package:embed/src/primitives/primitives.dart';
+import 'package:embed/src/embedders/primitives/primitives.dart';
 import 'package:embed/src/utils/dart_identifier.dart';
 import 'package:recase/recase.dart';
 
