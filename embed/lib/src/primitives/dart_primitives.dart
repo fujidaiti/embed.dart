@@ -1,4 +1,5 @@
 import 'package:embed/src/primitives/primitives.dart';
+import 'package:embed/src/utils/dart_identifier.dart';
 import 'package:recase/recase.dart';
 
 String literalOfInt(int value) => value.toString();
@@ -32,22 +33,23 @@ String literalOfMap(Map<dynamic, dynamic> value) {
   return "{$entries}";
 }
 
-final _validRecordFieldNamePattern = RegExp(r"^[a-zA-Z]\w*$");
-
-bool isValidRecordFieldName(String value) {
-  return _validRecordFieldNamePattern.hasMatch(value);
+bool canConvertToRecord(Map<dynamic, dynamic> value) {
+  return value.keys.every(
+      (key) => key is String && validDartIdentifierPattern.hasMatch(key));
 }
 
-bool canConvertToRecord(Map<dynamic, dynamic> value) {
-  return value.keys
-      .every((key) => key is String && isValidRecordFieldName(key));
+String _literalOfRecordField(dynamic value) {
+  assert(value is String);
+  assert(validDartIdentifierPattern.hasMatch(value));
+  final recased = (value as String).camelCase;
+  return reservedDartKeywords.contains(recased) ? "\$$recased" : recased;
 }
 
 String literalOfRecord(Map<dynamic, dynamic> value) {
   assert(canConvertToRecord(value));
   final entries = [
     for (final MapEntry(:key, :value) in value.entries)
-      "${(key as String).camelCase}:${literalOf(value)}"
+      "${_literalOfRecordField(key)}:${literalOf(value)}"
   ].join(",");
   return "($entries)";
 }

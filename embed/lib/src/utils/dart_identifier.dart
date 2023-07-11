@@ -1,0 +1,41 @@
+/// Dart's reserved keywords defined in https://dart.dev/language/keywords.
+///
+// Please keep this list in alphabetical order.
+const reservedDartKeywords = [
+  "assert",
+  "break",
+  "case",
+  "catch",
+  "class",
+  "const",
+  "continue",
+  "default",
+  "do",
+  "else",
+  "enum",
+  "extends",
+  "false",
+  "final",
+  "finally",
+  "for",
+  "if",
+  "in",
+  "is",
+  "new",
+  "null",
+  "rethrow",
+  "return",
+  "super",
+  "switch",
+  "this",
+  "throw",
+  "true",
+  "try",
+  "var",
+  "void",
+  "when",
+  "while",
+  "with",
+];
+
+final validDartIdentifierPattern = RegExp(r"^[a-zA-Z]\w*$");
