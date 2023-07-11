@@ -1,3 +1,4 @@
+import 'package:embed/src/primitives/primitives.dart';
 import 'package:recase/recase.dart';
 
 String literalOfInt(int value) => value.toString();
@@ -49,20 +50,4 @@ String literalOfRecord(Map<dynamic, dynamic> value) {
       "${(key as String).camelCase}:${literalOf(value)}"
   ].join(",");
   return "($entries)";
-}
-
-String literalOf(dynamic value) {
-  return switch (value) {
-    null => literalOfNull(),
-    bool value => literalOfBool(value),
-    int value => literalOfInt(value),
-    double value => literalOfDouble(value),
-    String value => literalOfString(value),
-    Map value when canConvertToRecord(value) => literalOfRecord(value),
-    Map value => literalOfMap(value),
-    Set value => literalOfSet(value),
-    List value => literalOfList(value),
-    _ => throw ArgumentError.value(
-        value, "value", "'${value.runtimeType}' type is not supported")
-  };
 }
