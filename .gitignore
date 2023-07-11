@@ -147,3 +147,4 @@ $RECYCLE.BIN/
 
 # Generated files
 *.g.dart
+*.g.part
