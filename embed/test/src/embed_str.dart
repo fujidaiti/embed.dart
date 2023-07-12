@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
@@ -8,7 +10,7 @@ This is a single line text
 ''';
 """)
 @EmbedStr("/test/src/contents/single_line.txt")
-const singleLine = _$singleLine;
+var singleLine;
 
 // The content should be embedded as is, even if it has multiple lines.
 @ShouldGenerate(r"""
@@ -18,7 +20,7 @@ The second line of the multi-line text
 ''';
 """)
 @EmbedStr("/test/src/contents/multi_line.txt")
-const multiLine = _$multiLine;
+var multiLine;
 
 // Leanding and trailing blank lines should be preserved.
 @ShouldGenerate(r"""
@@ -30,7 +32,7 @@ and a trailing blank line.
 ''';
 """)
 @EmbedStr("/test/src/contents/blank_lines.txt")
-const textWithBlankLines = _$textWithBlankLines;
+var textWithBlankLines;
 
 // Content should be able to contain single and double quotes.
 @ShouldGenerate(r"""
@@ -48,7 +50,7 @@ const _$simpleObjectJson = r'''
 ''';
 """)
 @EmbedStr("/test/src/contents/simple_object.json")
-const simpleObjectJson = _$simpleObjectJson;
+var simpleObjectJson;
 
 // Content should be embedded as a regular string literal.
 @ShouldGenerate(r"""
@@ -57,7 +59,7 @@ This is a single line text
 ''';
 """)
 @EmbedStr("/test/src/contents/single_line.txt", raw: false)
-const regularStringLiteral = _$regularStringLiteral;
+var regularStringLiteral;
 
 @ShouldThrow("Only top level variables can be annotated with EmbedStr")
 @EmbedStr("/test/src/contents/single_line.txt")
@@ -65,4 +67,4 @@ class AnnotateClassElement {}
 
 @ShouldThrow("No such file exists: /this/file/does/not/exist.txt")
 @EmbedStr("/this/file/does/not/exist.txt")
-const nonexistentFile = _$nonexistentFile;
+var nonexistentFile;
