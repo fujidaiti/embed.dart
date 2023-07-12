@@ -39,6 +39,18 @@ const _$arrayLiteral = [0, 1, 2, 3, 4, 5];
 @EmbedLiteral("/test/generators/literal/contents/common/array.json")
 var arrayLiteral;
 
+@ShouldGenerate(r"""
+const _$recordLiteral = (a: 0, b: 0.0, c: true);
+""")
+@EmbedLiteral("/test/generators/literal/contents/records/record.json")
+var recordLiteral;
+
+@ShouldGenerate(r"""
+const _$mapLiteral = {"#": 0};
+""")
+@EmbedLiteral("/test/generators/literal/contents/maps/map.json")
+var mapLiteral;
+
 // Any of the reserved Dart keywords should be prefixed with a '$' sign
 // when it is used as a record field name.
 @ShouldGenerate(r"""
