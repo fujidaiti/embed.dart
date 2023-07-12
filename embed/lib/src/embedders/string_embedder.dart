@@ -9,7 +9,7 @@ class StringEmbedder extends Embedder<EmbedStr> {
 
   @override
   FutureOr<String> getEmbeddingOf(File content) async {
-    final string = (await content.readAsString()).trim();
+    final string = await content.readAsString();
     final r = config.raw ? "r" : "";
     return "$r'''\n$string\n'''";
   }
