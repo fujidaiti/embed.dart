@@ -65,10 +65,10 @@ int main(void) {
   - [I edited my json file to embed, but the generated code doesn't update even when I run build\_runner again](#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [Links](#links)
 - [Thanks](#thanks)
 
-
-</br>
+<br/>
 
 ## Installation
 
