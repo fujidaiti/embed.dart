@@ -1,0 +1,32 @@
+[tasks.validate-example]
+cwd = './example'
+script = '''
+dart pub get
+dart run build_runner clean
+dart run build_runner build --delete-conflicting-outputs
+dart analyze
+'''
+
+[tasks.validate-annotation]
+cwd = './embed_annotation'
+script = '''
+dart pub get
+dart analyze
+dart pub publish --dry-run
+'''
+
+[tasks.validate-embed]
+cwd = './embed'
+script = '''
+dart pub get
+dart analyze
+dart test
+dart pub publish --dry-run
+'''
+
+[tasks.validate]
+run_task = { name = [
+  "validate-example",
+  "validate-annotation",
+  "validate-embed",
+] }
