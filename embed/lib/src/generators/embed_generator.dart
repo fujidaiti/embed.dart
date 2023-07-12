@@ -15,7 +15,7 @@ abstract class EmbedGenerator<E extends Embed>
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     if (element.kind != ElementKind.TOP_LEVEL_VARIABLE) {
       throw InvalidGenerationSourceError(
-        "Only top level variables can be annotated with ${E}s",
+        "Only top level variables can be annotated with $E",
         element: element,
       );
     }
