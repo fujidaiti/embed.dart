@@ -1,13 +1,13 @@
 name: embed
-description: A code generator for embedding external content into your Dart code.
-version: 0.0.0
+description: Code generation for embedding arbitrary file content into Dart code.
+version: 1.0.0
 repository: https://github.com/fujidaiti/embed.dart.git
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
-  embed_annotation: ^0.0.0
+  embed_annotation: ^1.0.0
   analyzer: ">=5.2.0 <7.0.0"
   build: ^2.4.1
   source_gen: ^1.4.0
