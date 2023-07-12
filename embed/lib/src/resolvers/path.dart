@@ -1,19 +1,22 @@
-import 'package:build/build.dart';
 import 'package:path/path.dart' as p;
 
-/// Convert [path] to an absolute path.
+/// Signature of a callback that returns the path of the input source file
+/// associated with the current [BuildStep], relative to the package root directory.
+typedef InputSourceFilePathProvider = String Function();
+
+/// Convert the given file [path] to an absolute path.
 ///
 /// If [path] is a relative path, this function assumes that [path] is
 /// relative to the directory containing the [source] file.
-/// 
+///
 /// if [path] is an absolute path, it is treated as relative
 /// to the package root directory.
-String resolvePath(String path, AssetId source) {
+String resolvePath(String path, InputSourceFilePathProvider source) {
   final resolved = switch (p.isAbsolute(path)) {
     true => changeRootDirectory(path, p.current),
     false => resolvePathRelativeToSource(
         relativePath: path,
-        absoluteSourcePath: inputSourcePath(source),
+        absoluteSourcePath: absoluteInputSourceFilePath(source),
       ),
   };
   return p.canonicalize(resolved);
@@ -34,9 +37,9 @@ String resolvePathRelativeToSource({
 /// Get the absolute path to the input [source] file.
 ///
 /// This function assumes that `build_runner` is run in the package root.
-String inputSourcePath(AssetId source) {
+String absoluteInputSourceFilePath(InputSourceFilePathProvider source) {
   final packageDir = p.current;
-  final relativeSourcePath = source.path;
+  final relativeSourcePath = source();
   return p.join(packageDir, relativeSourcePath);
 }
 

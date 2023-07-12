@@ -31,8 +31,9 @@ class EmbedGenerator extends GeneratorForAnnotation<Embed> {
 
   Future<String> _run(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
+    String inputSourceFilePath() => buildStep.inputId.path;
     final embedder = resolveEmbedder(annotation);
-    final contentPath = resolvePath(embedder.config.path, buildStep.inputId);
+    final contentPath = resolvePath(embedder.config.path, inputSourceFilePath);
     final content = resolveContent(contentPath);
 
     final variable = "_\$${element.name}";
