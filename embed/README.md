@@ -54,6 +54,7 @@ int main(void) {
 - [Index](#index)
 - [Installation](#installation)
 - [Quickstart](#quickstart)
+- [Examples](#examples)
 - [How to use](#how-to-use)
   - [Embed a text content as a string literal](#embed-a-text-content-as-a-string-literal)
   - [Embed a structured data as a Dart object](#embed-a-structured-data-as-a-dart-object)
@@ -158,6 +159,10 @@ After modifying the original file, the `pubspec.yaml` in this case, you need to 
 ```shell
 flutter pub run build_runner clean
 ```
+
+## Examples
+
+You can find many more examples in the [embed/test/src](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/src) directory and [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart).
 
 <br/>
 
