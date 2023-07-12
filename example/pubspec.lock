@@ -167,14 +167,14 @@ packages:
       path: "../embed"
       relative: true
     source: path
-    version: "0.0.0"
+    version: "1.0.0"
   embed_annotation:
     dependency: "direct main"
     description:
       path: "../embed_annotation"
       relative: true
     source: path
-    version: "0.0.0"
+    version: "1.0.0"
   file:
     dependency: transitive
     description:
