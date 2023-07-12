@@ -11,19 +11,26 @@ import 'package:source_gen/source_gen.dart';
 class EmbedGenerator extends GeneratorForAnnotation<Embed> {
   @override
   FutureOr<String> generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
-
+      Element element, ConstantReader annotation, BuildStep buildStep) async {
     if (element.kind != ElementKind.TOP_LEVEL_VARIABLE) {
-      throw ArgumentError.value(element, "element",
-          "Only top level variables can be annotated with ${Embed}s");
+      throw InvalidGenerationSourceError(
+        "Only top level variables can be annotated with ${Embed}s",
+        element: element,
+      );
     }
 
-    return _run(element, annotation, buildStep);
+    try {
+      return await _run(element, annotation, buildStep);
+    } on Error catch (error, stackTrace) {
+      throw Error.throwWithStackTrace(
+        InvalidGenerationSourceError("$error", element: element),
+        stackTrace,
+      );
+    }
   }
 
   Future<String> _run(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
-
     final embedder = resolveEmbedder(annotation);
     final contentPath = resolvePath(embedder.config.path, buildStep.inputId);
     final content = resolveContent(contentPath);
