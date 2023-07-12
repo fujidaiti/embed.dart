@@ -7,7 +7,7 @@
   	Code generation for embedding arbitrary file content into Dart code
     <br />
     <br />
-    <a href="https://pub.dev/documentation/embed/latest/"><strong>Explore the docs »</strong></a>
+    <a href="https://pub.dev/documentation/embed_annotation/latest/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://pub.dev/packages/embed">Pub.dev</a>
