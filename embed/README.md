@@ -7,7 +7,7 @@
   	Code generation for embedding arbitrary file content into Dart code
     <br />
     <br />
-    <a href="https://pub.dev/documentation/embed_annotation/latest/"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/fujidaiti/embed.dart#index"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://pub.dev/packages/embed">Pub.dev</a>
@@ -17,6 +17,7 @@
     <a href="https://github.com/fujidaiti/embed.dart/issues?q=is%3Aopen+label%3Aenhancement+sort%3Aupdated-desc">Request Feature</a>
   </p>
 </div>
+
 
 
 <br/>
@@ -372,6 +373,14 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+<br />
+
+## Links
+
+- [API Documentation](https://pub.dev/documentation/embed_annotation/latest/)
+- pub.dev ([embed](https://pub.dev/packages/embed), [embed_annotation](https://pub.dev/packages/embed_annotation))
+- GitHub [repository](https://github.com/fujidaiti/embed.dart)
 
 <br/>
 
