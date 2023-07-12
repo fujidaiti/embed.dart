@@ -6,37 +6,37 @@ import 'package:source_gen_test/source_gen_test.dart';
 @ShouldGenerate(r"""
 const _$integerLiterals = (a: 0);
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/integer.json")
+@EmbedLiteral("/test/generators/literal/contents/common/integer.json")
 var integerLiterals;
 
 @ShouldGenerate(r"""
 const _$floatLiterals = (a: 0.0, b: -0.0);
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/float.json")
+@EmbedLiteral("/test/generators/literal/contents/common/float.json")
 var floatLiterals;
 
 @ShouldGenerate(r"""
 const _$stringLiterals = (a: "a", b: "\"b\"", c: "'c'");
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/string.json")
+@EmbedLiteral("/test/generators/literal/contents/common/string.json")
 var stringLiterals;
 
 @ShouldGenerate(r"""
 const _$booleanLiterals = (a: true, b: false);
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/boolean.json")
+@EmbedLiteral("/test/generators/literal/contents/common/boolean.json")
 var booleanLiterals;
 
 @ShouldGenerate(r"""
 const _$nullLiteral = (a: null);
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/null.json")
+@EmbedLiteral("/test/generators/literal/contents/common/null.json")
 var nullLiteral;
 
 @ShouldGenerate(r"""
 const _$arrayLiteral = [0, 1, 2, 3, 4, 5];
 """)
-@EmbedLiteral("/test/generators/literal/contents/primitives/array.json")
+@EmbedLiteral("/test/generators/literal/contents/common/array.json")
 var arrayLiteral;
 
 // Any of the reserved Dart keywords should be prefixed with a '$' sign
