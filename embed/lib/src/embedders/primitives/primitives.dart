@@ -1,3 +1,4 @@
+import 'package:embed/src/common/usage_error.dart';
 import 'package:embed/src/embedders/primitives/dart_primitives.dart';
 import 'package:embed/src/embedders/primitives/toml_primitives.dart' as toml;
 import 'package:toml/toml.dart';
@@ -14,7 +15,6 @@ String literalOf(dynamic value) {
     Set value => literalOfSet(value),
     List value => literalOfList(value),
     TomlDateTime value => toml.literalOfDateTime(value),
-    _ => throw ArgumentError.value(
-        value, "value", "'${value.runtimeType}' type is not supported")
+    _ => throw UsageError("'${value.runtimeType}' type is not supported")
   };
 }

@@ -1,5 +1,5 @@
 import 'package:embed/src/embedders/primitives/primitives.dart';
-import 'package:embed/src/utils/dart_identifier.dart';
+import 'package:embed/src/common/dart_identifier.dart';
 import 'package:recase/recase.dart';
 
 String literalOfInt(int value) => value.toString();
