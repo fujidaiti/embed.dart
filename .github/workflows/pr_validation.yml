@@ -7,9 +7,6 @@ jobs:
   validation:
     name: PR validation
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        package: [./embed, ./embed_annotation]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,25 +16,14 @@ jobs:
         with:
           sdk: "stable"
 
-      - name: Dart versioin
-        run: dart --version
+      - name: Install cargo-make
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --debug cargo-make
 
-      - name: Install dependencies
-        working-directory: ${{ matrix.package }}
-        run: dart pub get
-
-      - name: Run build_runner
-        working-directory: ${{ matrix.package }}
-        run: dart run build_runner clean && dart run build_runner build
-
-      - name: Analize
-        working-directory: ${{ matrix.package }}
-        run: dart analyze
-
-      - name: Tests
-        working-directory: ${{ matrix.package }}
-        run: dart test
-
-      - name: Dry publish
-        working-directory: ${{ matrix.package }}
-        run: dart pub publish --dry-run
+      - name: Validate packages
+        uses: actions-rs/cargo@v1
+        with:
+          command: make
+          args: validate
