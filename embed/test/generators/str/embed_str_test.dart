@@ -3,8 +3,8 @@ import 'package:source_gen_test/source_gen_test.dart';
 
 Future<void> main() async {
   final libraryReader = await initializeLibraryReaderForDirectory(
-    "test/src/",
-    "embed_str.dart",
+    "test/generators/str/",
+    "embed_str_test_src.dart",
   );
 
   initializeBuildLogTracking();

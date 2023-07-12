@@ -1,9 +1,0 @@
-{
-  "integer": 0,
-  "float": 0.0,
-  "boolean": true,
-  "string": "'\"' must be escaped in JSON",
-  "null": null,
-  "object": {},
-  "array": []
-}
