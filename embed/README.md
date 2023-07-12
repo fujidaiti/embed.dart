@@ -163,7 +163,7 @@ flutter pub run build_runner clean
 
 ## Examples
 
-You can find many more examples in the [embed/test/src](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/src) directory and [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart).
+You can find many more examples in the [embed/test/src](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/generators) directory and [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart).
 
 <br/>
 
