@@ -103,7 +103,7 @@ import 'package:embed_annotation/embed_annotation.dart';
 // Like other code generation packages, you need to add this line
 part 'main.g.dart';
 
-// Create an annotation specifing the location of a content file to embed
+// Annotate a top-level variable specifing the location of a content file to embed
 @EmbedLiteral("../pubspec.yaml")
 const pubspec = _$pubspec;
 ```
