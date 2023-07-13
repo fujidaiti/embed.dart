@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:analyzer/dart/element/element.dart';
 import 'package:embed/src/embedders/embedder.dart';
 import 'package:embed/src/embedders/primitives/primitives.dart';
 import 'package:embed_annotation/embed_annotation.dart';
@@ -13,7 +14,8 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
   const LiteralEmbedder(super.config);
 
   @override
-  FutureOr<String> getEmbeddingOf(File content) async {
+  FutureOr<String> getEmbeddingOf(
+      File content, TopLevelVariableElement element) async {
     final value = await _parse(content);
     return literalOf(value);
   }

@@ -13,7 +13,7 @@ abstract class EmbedGenerator<E extends Embed>
   @override
   FutureOr<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
-    if (element.kind != ElementKind.TOP_LEVEL_VARIABLE) {
+    if (element is! TopLevelVariableElement) {
       throw InvalidGenerationSourceError(
         "Only top level variables can be annotated with $E",
         element: element,
@@ -35,13 +35,16 @@ abstract class EmbedGenerator<E extends Embed>
   }
 
   Future<String> _run(
-      Element element, ConstantReader annotation, BuildStep buildStep) async {
+    TopLevelVariableElement element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) async {
     String inputSourceFilePath() => buildStep.inputId.path;
     final embedder = createEmbedderFrom(annotation);
     final content = resolveContent(embedder.config.path, inputSourceFilePath);
 
     final variable = "_\$${element.name}";
-    final embedding = await embedder.getEmbeddingOf(content);
+    final embedding = await embedder.getEmbeddingOf(content, element);
     return "const $variable = $embedding;";
   }
 
