@@ -1,4 +1,4 @@
-import 'package:embed/src/common/usage_error.dart';
+import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/embedders/primitives/dart_primitives.dart';
 import 'package:embed/src/embedders/primitives/toml_primitives.dart' as toml;
 import 'package:toml/toml.dart';
