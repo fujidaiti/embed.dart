@@ -238,7 +238,7 @@ If this doesn't work well with your text content, you can disable this behavior 
 @EmbedStr("useful_text.txt", raw: false)
 ```
 
-This will generates a general string literal:
+This will generates a regular string literal:
 
 ```dart
 const _$usefulText = '''
