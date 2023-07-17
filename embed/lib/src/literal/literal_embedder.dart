@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:embed/src/common/embedder.dart';
+import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/pattern_matching.dart';
 import 'package:embed/src/literal/type_constraints.dart';
-import 'package:embed/src/common/embedder.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:toml/toml.dart';
@@ -29,8 +30,7 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
       ".json" => jsonDecode(stringContent),
       ".yaml" || ".yml" => loadYaml(stringContent),
       ".toml" => TomlDocument.parse(stringContent).toMap(),
-      _ => ArgumentError.value(content, "content",
-          "$EmbedLiteral does not support '*$fileExtension'"),
+      _ => UsageError("$EmbedLiteral does not support '*$fileExtension'"),
     };
   }
 }
