@@ -1,21 +1,21 @@
 import 'package:analyzer/dart/element/nullability_suffix.dart';
-import 'package:analyzer/dart/element/type.dart';
+import 'package:analyzer/dart/element/type.dart' as t;
 import 'package:embed/src/common/errors.dart';
 
 sealed class TypeConstraint {
   TypeConstraint();
 
-  abstract final DartType src;
+  abstract final t.DartType src;
 
-  factory TypeConstraint.from(DartType type) {
+  factory TypeConstraint.from(t.DartType type) {
     switch (type) {
-      case DynamicType _ || InvalidType _:
+      case t.DynamicType _ || t.InvalidType _:
         return DynamicType(type);
-      case RecordType type when type.namedFields.isEmpty:
+      case t.RecordType type when type.namedFields.isEmpty:
         return UnnamedRecordType(type);
-      case RecordType type when type.positionalFields.isEmpty:
+      case t.RecordType type when type.positionalFields.isEmpty:
         return NamedRecordType(type);
-      case InterfaceType type:
+      case t.InterfaceType type:
         if (type.isDartCoreObject) {
           return ObjectType(type);
         } else if (type.isDartCoreInt) {
@@ -53,28 +53,28 @@ class IntType extends TypeConstraint {
   IntType(this.src) : assert(src.isDartCoreInt);
 
   @override
-  final DartType src;
+  final t.DartType src;
 }
 
 class DoubleType extends TypeConstraint {
   DoubleType(this.src) : assert(src.isDartCoreDouble);
 
   @override
-  final DartType src;
+  final t.DartType src;
 }
 
 class BoolType extends TypeConstraint {
   BoolType(this.src) : assert(src.isDartCoreBool);
 
   @override
-  final DartType src;
+  final t.DartType src;
 }
 
 class StringType extends TypeConstraint {
   StringType(this.src) : assert(src.isDartCoreBool);
 
   @override
-  final DartType src;
+  final t.DartType src;
 }
 
 class ListType extends TypeConstraint {
@@ -82,7 +82,7 @@ class ListType extends TypeConstraint {
       : assert(src.isDartCoreList && src.typeArguments.length == 1);
 
   @override
-  final InterfaceType src;
+  final t.InterfaceType src;
 
   late final TypeConstraint itemType =
       TypeConstraint.from(src.typeArguments[0]);
@@ -93,7 +93,7 @@ class SetType extends TypeConstraint {
       : assert(src.isDartCoreSet && src.typeArguments.length == 1);
 
   @override
-  final InterfaceType src;
+  final t.InterfaceType src;
 
   late final TypeConstraint itemType =
       TypeConstraint.from(src.typeArguments[0]);
@@ -104,7 +104,7 @@ class MapType extends TypeConstraint {
       : assert(src.isDartCoreMap && src.typeArguments.length == 2);
 
   @override
-  final InterfaceType src;
+  final t.InterfaceType src;
 
   late final TypeConstraint keyType = TypeConstraint.from(src.typeArguments[0]);
 
@@ -116,7 +116,7 @@ class UnnamedRecordType extends TypeConstraint {
   UnnamedRecordType(this.src) : assert(src.namedFields.isEmpty);
 
   @override
-  final RecordType src;
+  final t.RecordType src;
 
   late final List<TypeConstraint> fields = src.positionalFields
       .map((field) => TypeConstraint.from(field.type))
@@ -127,7 +127,7 @@ class NamedRecordType extends TypeConstraint {
   NamedRecordType(this.src) : assert(src.positionalFields.isEmpty);
 
   @override
-  final RecordType src;
+  final t.RecordType src;
 
   late final Map<String, TypeConstraint> fields = {
     for (final field in src.namedFields)
@@ -141,14 +141,14 @@ class ObjectType extends AnyType {
   ObjectType(this.src) : assert(src.isDartCoreObject);
 
   @override
-  final InterfaceType src;
+  final t.InterfaceType src;
 }
 
 class DynamicType extends AnyType {
-  DynamicType(this.src) : assert(src is DynamicType || src is InvalidType);
+  DynamicType(this.src) : assert(src is t.DynamicType || src is t.InvalidType);
 
   @override
-  final DartType src;
+  final t.DartType src;
 
   @override
   bool get isNullable => true;

@@ -9,7 +9,7 @@ const _$singleLine = r'''
 This is a single line text
 ''';
 """)
-@EmbedStr("/test/generators/str/contents/single_line.txt")
+@EmbedStr("/test/str/contents/single_line.txt")
 var singleLine;
 
 // The content should be embedded as is, even if it has multiple lines.
@@ -19,7 +19,7 @@ The first line of the multi-line text
 The second line of the multi-line text
 ''';
 """)
-@EmbedStr("/test/generators/str/contents/multi_line.txt")
+@EmbedStr("/test/str/contents/multi_line.txt")
 var multiLine;
 
 // Leanding and trailing blank lines should be preserved.
@@ -31,7 +31,7 @@ and a trailing blank line.
 
 ''';
 """)
-@EmbedStr("/test/generators/str/contents/blank_lines.txt")
+@EmbedStr("/test/str/contents/blank_lines.txt")
 var textWithBlankLines;
 
 // Content should be able to contain qutation marks.
@@ -40,7 +40,7 @@ const _$quotationMarks = r'''
 a "b" c 'd' e \"f\'
 ''';
 """)
-@EmbedStr("/test/generators/str/contents/quotation_marks.txt")
+@EmbedStr("/test/str/contents/quotation_marks.txt")
 var quotationMarks;
 
 // Content should be embedded as a regular string literal.
@@ -49,11 +49,11 @@ const _$regularStringLiteral = '''
 This is a single line text
 ''';
 """)
-@EmbedStr("/test/generators/str/contents/single_line.txt", raw: false)
+@EmbedStr("/test/str/contents/single_line.txt", raw: false)
 var regularStringLiteral;
 
 @ShouldThrow("Only top level variables can be annotated with EmbedStr")
-@EmbedStr("/test/generators/str/contents/single_line.txt")
+@EmbedStr("/test/str/contents/single_line.txt")
 class AnnotateClassElement {}
 
 @ShouldThrow("No such file exists: /this/file/does/not/exist.txt")
