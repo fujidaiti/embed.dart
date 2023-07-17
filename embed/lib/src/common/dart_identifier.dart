@@ -1,7 +1,26 @@
+class DartIdentifier {
+  DartIdentifier(this.string) : assert(isValidDartIdentifier(string));
+
+  final String string;
+
+  @override
+  String toString() => string;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DartIdentifier &&
+          runtimeType == other.runtimeType &&
+          string == other.string);
+
+  @override
+  int get hashCode => Object.hash(runtimeType, string);
+}
+
 /// Dart's reserved keywords defined in https://dart.dev/language/keywords.
 ///
 // Please keep this list in alphabetical order.
-const reservedDartKeywords = [
+const reservedDartKeywords = {
   "assert",
   "break",
   "case",
@@ -36,6 +55,10 @@ const reservedDartKeywords = [
   "when",
   "while",
   "with",
-];
+};
 
-final validDartIdentifierPattern = RegExp(r"^[a-zA-Z]\w*$");
+final _validDartIdentifierPattern = RegExp(r"^[a-zA-Z_]\w*$");
+
+bool isValidDartIdentifier(String string) =>
+    _validDartIdentifierPattern.hasMatch(string) &&
+    !reservedDartKeywords.contains(string);

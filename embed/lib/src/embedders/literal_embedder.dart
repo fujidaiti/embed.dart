@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:embed/src/common/pattern_matching.dart';
+import 'package:embed/src/common/type_constraints.dart';
 import 'package:embed/src/embedders/embedder.dart';
-import 'package:embed/src/embedders/primitives/primitives.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:toml/toml.dart';
@@ -17,7 +18,8 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
   FutureOr<String> getEmbeddingOf(
       File content, TopLevelVariableElement element) async {
     final value = await _parse(content);
-    return literalOf(value);
+    final expectedType = TypeConstraint.from(element.type);
+    return match(value, expectedType).toString();
   }
 
   Future<dynamic> _parse(File content) async {
