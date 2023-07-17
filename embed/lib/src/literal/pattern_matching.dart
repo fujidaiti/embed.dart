@@ -1,8 +1,8 @@
-import 'package:embed/src/common/dart_identifier.dart';
-import 'package:embed/src/common/dart_literals.dart';
+import 'package:embed/src/literal/dart_identifier.dart';
+import 'package:embed/src/literal/dart_literals.dart';
 import 'package:embed/src/common/errors.dart';
-import 'package:embed/src/common/type_constraints.dart';
-import 'package:embed/src/common/utils.dart';
+import 'package:embed/src/literal/type_constraints.dart';
+import 'package:embed/src/utils.dart';
 import 'package:toml/toml.dart';
 
 /// Given a [value] and a [expectedType] that constraints the shape of the [value],

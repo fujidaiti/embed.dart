@@ -1,4 +1,4 @@
-import 'package:embed/src/common/dart_identifier.dart';
+import 'package:embed/src/literal/dart_identifier.dart';
 
 sealed class DartLiteral<T> {
   final T value;

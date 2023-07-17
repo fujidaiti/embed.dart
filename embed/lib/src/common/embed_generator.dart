@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:embed/src/common/resolve_content.dart';
-import 'package:embed/src/embedders/embedder.dart';
+import 'package:embed/src/common/embedder.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 

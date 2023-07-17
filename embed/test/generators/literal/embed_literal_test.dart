@@ -1,4 +1,4 @@
-import 'package:embed/src/generators/embed_literal_generator.dart';
+import 'package:embed/src/literal/embed_literal_generator.dart';
 import 'package:source_gen_test/source_gen_test.dart';
 
 Future<void> main() async {

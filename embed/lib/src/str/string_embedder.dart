@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
-import 'package:embed/src/embedders/embedder.dart';
+import 'package:embed/src/common/embedder.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 
 class StringEmbedder extends Embedder<EmbedStr> {
