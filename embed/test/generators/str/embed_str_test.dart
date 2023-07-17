@@ -1,4 +1,4 @@
-import 'package:embed/src/str/embed_str_generator.dart';
+import 'package:embed/src/str/str_embedding_generator.dart';
 import 'package:source_gen_test/source_gen_test.dart';
 
 Future<void> main() async {
@@ -8,5 +8,5 @@ Future<void> main() async {
   );
 
   initializeBuildLogTracking();
-  testAnnotatedElements(libraryReader, EmbedStrGenerator());
+  testAnnotatedElements(libraryReader, StrEmbeddingGenerator());
 }
