@@ -1,158 +1,265 @@
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart' as t;
 import 'package:embed/src/common/errors.dart';
+import 'package:embed/src/literal/dart_identifier.dart';
+import 'package:meta/meta.dart';
 
 sealed class TypeConstraint {
-  TypeConstraint();
+  @visibleForTesting
+  const TypeConstraint({
+    required this.isNullable,
+    required this.displayString,
+  });
 
-  abstract final t.DartType src;
+  final bool isNullable;
+  final String displayString;
 
   factory TypeConstraint.from(t.DartType type) {
     switch (type) {
       case t.DynamicType _ || t.InvalidType _:
-        return DynamicType(type);
+        return const DynamicType();
       case t.RecordType type when type.namedFields.isEmpty:
-        return UnnamedRecordType(type);
+        return UnnamedRecordType.from(type);
       case t.RecordType type when type.positionalFields.isEmpty:
-        return NamedRecordType(type);
+        return NamedRecordType.from(type);
       case t.InterfaceType type:
         if (type.isDartCoreObject) {
-          return ObjectType(type);
+          return ObjectType.from(type);
         } else if (type.isDartCoreInt) {
-          return IntType(type);
+          return IntType.from(type);
         } else if (type.isDartCoreDouble) {
-          return DoubleType(type);
+          return DoubleType.from(type);
         } else if (type.isDartCoreBool) {
-          return BoolType(type);
+          return BoolType.from(type);
         } else if (type.isDartCoreString) {
-          return StringType(type);
+          return StringType.from(type);
         } else if (type.isDartCoreList) {
-          return ListType(type);
+          return ListType.from(type);
         } else if (type.isDartCoreSet) {
-          return SetType(type);
+          return SetType.from(type);
         } else if (type.isDartCoreMap) {
-          return MapType(type);
+          return MapType.from(type);
         }
     }
 
     throw UsageError("'$type' type is not supported");
   }
 
-  bool get isNullable => switch (src.nullabilitySuffix) {
+  @override
+  String toString() => displayString;
+}
+
+class IntType extends TypeConstraint {
+  @visibleForTesting
+  const IntType({
+    required super.isNullable,
+    required super.displayString,
+  });
+
+  factory IntType.from(t.InterfaceType type) {
+    assert(type.isDartCoreInt);
+    return IntType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+    );
+  }
+}
+
+class DoubleType extends TypeConstraint {
+  @visibleForTesting
+  const DoubleType({
+    required super.isNullable,
+    required super.displayString,
+  });
+
+  factory DoubleType.from(t.InterfaceType type) {
+    assert(type.isDartCoreDouble);
+    return DoubleType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+    );
+  }
+}
+
+class BoolType extends TypeConstraint {
+  @visibleForTesting
+  const BoolType({
+    required super.isNullable,
+    required super.displayString,
+  });
+
+  factory BoolType.from(t.InterfaceType type) {
+    assert(type.isDartCoreBool);
+    return BoolType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+    );
+  }
+}
+
+class StringType extends TypeConstraint {
+  @visibleForTesting
+  const StringType({
+    required super.isNullable,
+    required super.displayString,
+  });
+
+  factory StringType.from(t.InterfaceType type) {
+    assert(type.isDartCoreString);
+    return StringType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+    );
+  }
+}
+
+class ListType extends TypeConstraint {
+  @visibleForTesting
+  const ListType({
+    required super.isNullable,
+    required super.displayString,
+    required this.itemType,
+  });
+
+  factory ListType.from(t.InterfaceType type) {
+    assert(type.isDartCoreList && type.typeArguments.length == 1);
+    return ListType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+      itemType: TypeConstraint.from(type.typeArguments[0]),
+    );
+  }
+
+  final TypeConstraint itemType;
+}
+
+class SetType extends TypeConstraint {
+  @visibleForTesting
+  const SetType({
+    required super.isNullable,
+    required super.displayString,
+    required this.itemType,
+  });
+
+  factory SetType.from(t.InterfaceType type) {
+    assert(type.isDartCoreSet && type.typeArguments.length == 1);
+    return SetType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+      itemType: TypeConstraint.from(type.typeArguments[0]),
+    );
+  }
+
+  final TypeConstraint itemType;
+}
+
+class MapType extends TypeConstraint {
+  @visibleForTesting
+  const MapType({
+    required super.isNullable,
+    required super.displayString,
+    required this.keyType,
+    required this.valueType,
+  });
+
+  factory MapType.from(t.InterfaceType type) {
+    assert(type.isDartCoreMap && type.typeArguments.length == 2);
+    return MapType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+      keyType: TypeConstraint.from(type.typeArguments[0]),
+      valueType: TypeConstraint.from(type.typeArguments[1]),
+    );
+  }
+
+  final TypeConstraint keyType;
+  final TypeConstraint valueType;
+}
+
+class UnnamedRecordType extends TypeConstraint {
+  @visibleForTesting
+  const UnnamedRecordType({
+    required super.isNullable,
+    required super.displayString,
+    required this.fields,
+  });
+
+  factory UnnamedRecordType.from(t.RecordType type) {
+    assert(type.namedFields.isEmpty);
+    return UnnamedRecordType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+      fields: [
+        for (final field in type.positionalFields)
+          TypeConstraint.from(field.type)
+      ],
+    );
+  }
+
+  final List<TypeConstraint> fields;
+}
+
+class NamedRecordType extends TypeConstraint {
+  @visibleForTesting
+  const NamedRecordType({
+    required super.displayString,
+    required super.isNullable,
+    required this.fields,
+  });
+
+  factory NamedRecordType.from(t.RecordType type) {
+    assert(type.positionalFields.isEmpty);
+    return NamedRecordType(
+      displayString: type.displayString,
+      isNullable: type.isNullable,
+      fields: {
+        for (final field in type.namedFields)
+          DartIdentifier(field.name): TypeConstraint.from(field.type)
+      },
+    );
+  }
+
+  final Map<DartIdentifier, TypeConstraint> fields;
+}
+
+abstract class AnyType extends TypeConstraint {
+  const AnyType({
+    required super.isNullable,
+    required super.displayString,
+  });
+}
+
+class ObjectType extends AnyType {
+  @visibleForTesting
+  const ObjectType({
+    required super.isNullable,
+    required super.displayString,
+  });
+
+  factory ObjectType.from(t.InterfaceType type) {
+    assert(type.isDartCoreObject);
+    return ObjectType(
+      isNullable: type.isNullable,
+      displayString: type.displayString,
+    );
+  }
+}
+
+class DynamicType extends AnyType {
+  const DynamicType()
+      : super(
+          isNullable: true,
+          displayString: "dynamic",
+        );
+}
+
+extension _IsNullable on t.DartType {
+  bool get isNullable => switch (nullabilitySuffix) {
         NullabilitySuffix.question => true,
         NullabilitySuffix.none => false,
         // TODO: What is the "star"!?
         NullabilitySuffix.star => throw ShouldNeverBeHappenError(),
       };
 
-  @override
-  String toString() => src.getDisplayString(withNullability: true);
-}
-
-class IntType extends TypeConstraint {
-  IntType(this.src) : assert(src.isDartCoreInt);
-
-  @override
-  final t.DartType src;
-}
-
-class DoubleType extends TypeConstraint {
-  DoubleType(this.src) : assert(src.isDartCoreDouble);
-
-  @override
-  final t.DartType src;
-}
-
-class BoolType extends TypeConstraint {
-  BoolType(this.src) : assert(src.isDartCoreBool);
-
-  @override
-  final t.DartType src;
-}
-
-class StringType extends TypeConstraint {
-  StringType(this.src) : assert(src.isDartCoreBool);
-
-  @override
-  final t.DartType src;
-}
-
-class ListType extends TypeConstraint {
-  ListType(this.src)
-      : assert(src.isDartCoreList && src.typeArguments.length == 1);
-
-  @override
-  final t.InterfaceType src;
-
-  late final TypeConstraint itemType =
-      TypeConstraint.from(src.typeArguments[0]);
-}
-
-class SetType extends TypeConstraint {
-  SetType(this.src)
-      : assert(src.isDartCoreSet && src.typeArguments.length == 1);
-
-  @override
-  final t.InterfaceType src;
-
-  late final TypeConstraint itemType =
-      TypeConstraint.from(src.typeArguments[0]);
-}
-
-class MapType extends TypeConstraint {
-  MapType(this.src)
-      : assert(src.isDartCoreMap && src.typeArguments.length == 2);
-
-  @override
-  final t.InterfaceType src;
-
-  late final TypeConstraint keyType = TypeConstraint.from(src.typeArguments[0]);
-
-  late final TypeConstraint valueType =
-      TypeConstraint.from(src.typeArguments[1]);
-}
-
-class UnnamedRecordType extends TypeConstraint {
-  UnnamedRecordType(this.src) : assert(src.namedFields.isEmpty);
-
-  @override
-  final t.RecordType src;
-
-  late final List<TypeConstraint> fields = src.positionalFields
-      .map((field) => TypeConstraint.from(field.type))
-      .toList(growable: false);
-}
-
-class NamedRecordType extends TypeConstraint {
-  NamedRecordType(this.src) : assert(src.positionalFields.isEmpty);
-
-  @override
-  final t.RecordType src;
-
-  late final Map<String, TypeConstraint> fields = {
-    for (final field in src.namedFields)
-      field.name: TypeConstraint.from(field.type)
-  };
-}
-
-abstract class AnyType extends TypeConstraint {}
-
-class ObjectType extends AnyType {
-  ObjectType(this.src) : assert(src.isDartCoreObject);
-
-  @override
-  final t.InterfaceType src;
-}
-
-class DynamicType extends AnyType {
-  DynamicType(this.src) : assert(src is t.DynamicType || src is t.InvalidType);
-
-  @override
-  final t.DartType src;
-
-  @override
-  bool get isNullable => true;
-
-  @override
-  String toString() => "dynamic";
+  String get displayString => getDisplayString(withNullability: isNullable);
 }

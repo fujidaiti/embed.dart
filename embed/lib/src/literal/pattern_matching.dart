@@ -61,10 +61,10 @@ DartLiteral match(Object? value, TypeConstraint expectedType) {
     case (Map values, NamedRecordType expected):
       return NamedRecordLiteral({
         for (final field in expected.fields.entries)
-          if (values.containsKey(field.key))
-            DartIdentifier(field.key): match(values[field.key], field.value)
+          if (values.containsKey(field.key.string))
+            field.key: match(values[field.key.string], field.value)
           else if (field.value.isNullable)
-            DartIdentifier(field.key): const NullLiteral()
+            field.key: const NullLiteral()
           else
             DartIdentifier('_'): typeMismatchError(
                 hint: "The given value doesn't contain a key-value pair "

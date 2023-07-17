@@ -4,6 +4,16 @@ sealed class DartLiteral<T> {
   final T value;
 
   const DartLiteral(this.value);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DartLiteral &&
+          runtimeType == other.runtimeType &&
+          value == other.value);
+
+  @override
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class NullLiteral extends DartLiteral<void> {
