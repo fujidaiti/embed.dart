@@ -1,6 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:embed/src/literal/dart_identifier.dart';
 
-sealed class DartLiteral<T> {
+abstract class DartLiteral<T> {
   final T value;
 
   const DartLiteral(this.value);
@@ -14,6 +15,18 @@ sealed class DartLiteral<T> {
 
   @override
   int get hashCode => Object.hash(runtimeType, value);
+}
+
+abstract class CollectionLiteral<T> extends DartLiteral<T> {
+  const CollectionLiteral(super.value);
+
+  @override
+  // ignore: hash_and_equals
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CollectionLiteral &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(value, other.value));
 }
 
 class NullLiteral extends DartLiteral<void> {
@@ -54,21 +67,21 @@ class StringLiteral extends DartLiteral<String> {
   }
 }
 
-class ListLiteral extends DartLiteral<List<DartLiteral>> {
+class ListLiteral extends CollectionLiteral<List<DartLiteral>> {
   const ListLiteral(super.value);
 
   @override
   String toString() => "[${value.join(",")}]";
 }
 
-class SetLiteral extends DartLiteral<Set<DartLiteral>> {
+class SetLiteral extends CollectionLiteral<Set<DartLiteral>> {
   const SetLiteral(super.value);
 
   @override
   String toString() => "{${value.join(",")}}";
 }
 
-class MapLiteral extends DartLiteral<Map<DartLiteral, DartLiteral>> {
+class MapLiteral extends CollectionLiteral<Map<DartLiteral, DartLiteral>> {
   const MapLiteral(super.value);
 
   @override
@@ -80,14 +93,15 @@ class MapLiteral extends DartLiteral<Map<DartLiteral, DartLiteral>> {
   }
 }
 
-class UnnamedRecordLiteral extends DartLiteral<List<DartLiteral>> {
+class UnnamedRecordLiteral extends CollectionLiteral<List<DartLiteral>> {
   const UnnamedRecordLiteral(super.value);
 
   @override
   String toString() => "(${value.join(",")})";
 }
 
-class NamedRecordLiteral extends DartLiteral<Map<DartIdentifier, DartLiteral>> {
+class NamedRecordLiteral
+    extends CollectionLiteral<Map<DartIdentifier, DartLiteral>> {
   const NamedRecordLiteral(super.value);
 
   @override
