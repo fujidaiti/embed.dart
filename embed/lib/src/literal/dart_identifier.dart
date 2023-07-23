@@ -57,7 +57,7 @@ const reservedDartKeywords = {
   "with",
 };
 
-final _validDartIdentifierPattern = RegExp(r"^[a-zA-Z_]\w*$");
+final _validDartIdentifierPattern = RegExp(r"^[\$a-zA-Z_][\w\$]*$");
 
 bool isValidDartIdentifier(String string) =>
     _validDartIdentifierPattern.hasMatch(string) &&

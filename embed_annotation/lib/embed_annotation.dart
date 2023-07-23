@@ -2,13 +2,13 @@ library embed_annotation;
 
 /// Base class for the all annotation classes
 /// that configures how content is embedded.
-/// 
+///
 /// Use the one of the folowing subclasses to
 /// configure how content should be embedded.
-/// 
+///
 /// * [EmbedStr] : For embedding a text content as a string literal.
 /// * [EmbedLiteral] : For embedding a structured data as a dart object.
-/// 
+///
 /// Only top level elements can be annotated with these annotations.
 sealed class Embed {
   // Make this constructor private to prevent [Embed]
@@ -49,7 +49,7 @@ sealed class Embed {
 /// Annotation for embedding a text content as a string literal.
 class EmbedStr extends Embed {
   /// Creates an annotatoin for embedding a text content as a string literal.
-  /// 
+  ///
   /// By default, the text is embedded as a [raw string literal](https://dart.dev/language/built-in-types#strings).
   /// To embed it as a normal string literal, specify [raw] as `false`.
   const EmbedStr(super.path, {this.raw = true}) : super._();
@@ -59,9 +59,55 @@ class EmbedStr extends Embed {
 }
 
 /// Annotation for embedding a structured data as a dart object.
-/// 
+///
 /// Currently, JSON, YAML and TOML files are supported.
 class EmbedLiteral extends Embed {
   /// Creates an annotation for embedding a structured data as a dart object.
-  const EmbedLiteral(super.path) : super._();
+  const EmbedLiteral(
+    super.path, {
+    this.preprocessors = const [
+      Preprocessor.recase,
+      Preprocessor.escapeReservedKeywords,
+    ],
+  }) : super._();
+
+  final List<Preprocessor> preprocessors;
+}
+
+sealed class Preprocessor {
+  const Preprocessor();
+
+  static const recase = Recase();
+  static const escapeReservedKeywords = EscapeReservedKeywords();
+
+  factory Preprocessor.replace(
+    String pattern,
+    String replacement, {
+    bool onlyFirst = false,
+  }) =>
+      Replace(
+        pattern,
+        replacement,
+        onlyFirst: onlyFirst,
+      );
+}
+
+class Recase extends Preprocessor {
+  const Recase();
+}
+
+class EscapeReservedKeywords extends Preprocessor {
+  const EscapeReservedKeywords();
+}
+
+class Replace extends Preprocessor {
+  const Replace(
+    this.pattern,
+    this.replacement, {
+    this.onlyFirst = false,
+  });
+
+  final String pattern;
+  final String replacement;
+  final bool onlyFirst;
 }

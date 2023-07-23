@@ -6,6 +6,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/pattern_matching.dart';
+import 'package:embed/src/literal/preprocessing.dart';
 import 'package:embed/src/literal/type_constraints.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:path/path.dart' as p;
@@ -20,7 +21,8 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
       File content, TopLevelVariableElement element) async {
     final value = await _parse(content);
     final expectedType = TypeConstraint.from(element.type);
-    return match(value, expectedType).toString();
+    final preprocessed = Preprocessing(config.preprocessors).applyTo(value);
+    return match(preprocessed, expectedType).toString();
   }
 
   Future<dynamic> _parse(File content) async {
