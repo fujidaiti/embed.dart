@@ -24,11 +24,39 @@ void main() {
     });
 
     test(
+        "should return a double literal  if the given value "
+        "is an integer and the type is constrained to be double", () {
+      final constraint = DoubleType(isNullable: false, displayString: "double");
+      expect(match(0, constraint), const DoubleLiteral(0.0));
+    });
+
+    test(
+        "should return an boolean literal of 'true' if the given value "
+        "is an integer of '1' and the type is constrained to be boolean", () {
+      final constraint = BoolType(isNullable: false, displayString: "bool");
+      expect(match(1, constraint), const BoolLiteral(true));
+    });
+
+    test(
+        "should return an boolean literal of 'false' if the given value "
+        "is an integer of '0' and the type is constrained to be boolean", () {
+      final constraint = BoolType(isNullable: false, displayString: "bool");
+      expect(match(0, constraint), const BoolLiteral(false));
+    });
+
+    test(
         "should return a double literal if the given value "
         "is a float value and the type is constrained to be double", () {
       final constraint = DoubleType(isNullable: false, displayString: "double");
       final result = match(0.0, constraint);
       expect(result, const DoubleLiteral(0.0));
+    });
+
+    test(
+        "should return an rounded integer literal if the given value "
+        "is a float value and the type is constrained to be int", () {
+      final constraint = IntType(isNullable: false, displayString: "int");
+      expect(match(3.14, constraint), const IntLiteral(3));
     });
 
     test(
@@ -40,11 +68,26 @@ void main() {
     });
 
     test(
+        "should return an integer literal of '0' or '1' if the given value "
+        "is a boolean value and the type is ocnstrained to be int", () {
+      final constraint = IntType(isNullable: false, displayString: "int");
+      expect(match(true, constraint), const IntLiteral(1));
+    });
+
+    test(
         "should return a string literal if the given value "
         "is a string and the type is constrained to be String", () {
       final constraint = StringType(isNullable: false, displayString: "String");
       final result = match("text", constraint);
       expect(result, const StringLiteral("text"));
+    });
+
+    test(
+        "should return a hexdecimal integer literal if the given value"
+        "is a string that starts with '0x' and the type is constrained to be int",
+        () {
+      final constraint = IntType(isNullable: false, displayString: "int");
+      expect(match("0xf", constraint), const HexdecimalIntLiteral(15));
     });
 
     test(
@@ -234,16 +277,17 @@ void main() {
     test(
         "should throw an error if an unsupported combination of "
         "a value and a type constraint is given", () {
-      final constraint = DoubleType(
+      final constraint = ListType(
         isNullable: false,
-        displayString: "double",
+        displayString: "List<dynamic>",
+        itemType: DynamicType(),
       );
       expect(
         () => match(0, constraint),
         throwsA(isA<UsageError>().having(
           (err) => err.message,
           "message",
-          "Expected a value of type 'double', "
+          "Expected a value of type 'List<dynamic>', "
               "but found '0' of type 'int'.\n"
               "Hint: The given value doesn't satisfy the type constraint, "
               "or the given type constraint is not supported.",

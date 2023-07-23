@@ -10,6 +10,12 @@ const _$integerLiterals = (a: 0);
 var integerLiterals;
 
 @ShouldGenerate(r"""
+const _$hexDecimalIntegerLiteral = {"a": 0xffffffff};
+""")
+@EmbedLiteral("/test/literal/contents/common/hex.json")
+Map<String, int>? hexDecimalIntegerLiteral;
+
+@ShouldGenerate(r"""
 const _$floatLiterals = (a: 0.0, b: -0.0);
 """)
 @EmbedLiteral("/test/literal/contents/common/float.json")

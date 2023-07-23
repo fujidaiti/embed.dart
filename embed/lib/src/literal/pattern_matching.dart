@@ -1,6 +1,6 @@
+import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/dart_identifier.dart';
 import 'package:embed/src/literal/dart_literals.dart';
-import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/type_constraints.dart';
 import 'package:embed/src/utils.dart';
 import 'package:toml/toml.dart';
@@ -19,12 +19,24 @@ DartLiteral match(Object? value, TypeConstraint expectedType) {
       return const NullLiteral();
     case (int value, IntType _ || AnyType _):
       return IntLiteral(value);
+    case (int value, DoubleType _):
+      return DoubleLiteral(value.toDouble());
+    case (int value, BoolType _) when value == 1:
+      return const BoolLiteral(true);
+    case (int value, BoolType _) when value == 0:
+      return const BoolLiteral(false);
     case (double value, DoubleType _ || AnyType _):
       return DoubleLiteral(value);
+    case (double value, IntType _):
+      return IntLiteral(value.round());
     case (bool value, BoolType _ || AnyType _):
       return BoolLiteral(value);
+    case (bool value, IntType _):
+      return IntLiteral(value ? 1 : 0);
     case (String value, StringType _ || AnyType _):
       return StringLiteral(value);
+    case (String value, IntType _) when value.startsWith("0x"):
+      return HexdecimalIntLiteral(int.parse(value));
     case (TomlDateTime value, StringType _ || AnyType _):
       return StringLiteral(value.toString());
 

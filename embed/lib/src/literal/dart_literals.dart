@@ -43,6 +43,16 @@ class IntLiteral extends DartLiteral<int> {
   String toString() => "$value";
 }
 
+class HexdecimalIntLiteral extends DartLiteral<int> {
+  const HexdecimalIntLiteral(super.value);
+
+  @override
+  String toString() {
+    final hexCode = value.toRadixString(16).padLeft(8, "0");
+    return "0x$hexCode";
+  }
+}
+
 class DoubleLiteral extends DartLiteral<double> {
   const DoubleLiteral(super.value);
 
