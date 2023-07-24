@@ -59,6 +59,7 @@ int main(void) {
 - [How to use](#how-to-use)
   - [Embed a text content as a string literal](#embed-a-text-content-as-a-string-literal)
   - [Embed a structured data as a Dart object](#embed-a-structured-data-as-a-dart-object)
+    - [Preprocessing](#preprocessing)
     - [How is the data type determined?](#how-is-the-data-type-determined)
     - [How to restrict the structure of data to be embedded?](#how-to-restrict-the-structure-of-data-to-be-embedded)
 - [Troubleshooting Guide](#troubleshooting-guide)
