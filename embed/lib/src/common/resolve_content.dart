@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:embed/src/common/usage_error.dart';
+import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
 File resolveContent(String path, InputSourceFilePathProvider source) {

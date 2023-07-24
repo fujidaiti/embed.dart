@@ -1,0 +1,12 @@
+name: example
+publish_to: none
+
+environment:
+  sdk: ^3.0.5
+
+dependencies:
+  embed_annotation:
+    path: ../../embed_annotation
+
+dev_dependencies:
+  lints: ^2.0.0

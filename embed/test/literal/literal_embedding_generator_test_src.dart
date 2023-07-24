@@ -6,49 +6,55 @@ import 'package:source_gen_test/source_gen_test.dart';
 @ShouldGenerate(r"""
 const _$integerLiterals = (a: 0);
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/integer.json")
+@EmbedLiteral("/test/literal/contents/common/integer.json")
 var integerLiterals;
+
+@ShouldGenerate(r"""
+const _$hexDecimalIntegerLiteral = {"a": 0xffffffff};
+""")
+@EmbedLiteral("/test/literal/contents/common/hex.json")
+Map<String, int>? hexDecimalIntegerLiteral;
 
 @ShouldGenerate(r"""
 const _$floatLiterals = (a: 0.0, b: -0.0);
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/float.json")
+@EmbedLiteral("/test/literal/contents/common/float.json")
 var floatLiterals;
 
 @ShouldGenerate(r"""
 const _$stringLiterals = (a: "a", b: "\"b\"", c: "'c'");
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/string.json")
+@EmbedLiteral("/test/literal/contents/common/string.json")
 var stringLiterals;
 
 @ShouldGenerate(r"""
 const _$booleanLiterals = (a: true, b: false);
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/boolean.json")
+@EmbedLiteral("/test/literal/contents/common/boolean.json")
 var booleanLiterals;
 
 @ShouldGenerate(r"""
 const _$nullLiteral = (a: null);
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/null.json")
+@EmbedLiteral("/test/literal/contents/common/null.json")
 var nullLiteral;
 
 @ShouldGenerate(r"""
 const _$arrayLiteral = [0, 1, 2, 3, 4, 5];
 """)
-@EmbedLiteral("/test/generators/literal/contents/common/array.json")
+@EmbedLiteral("/test/literal/contents/common/array.json")
 var arrayLiteral;
 
 @ShouldGenerate(r"""
 const _$recordLiteral = (a: 0, b: 0.0, c: true);
 """)
-@EmbedLiteral("/test/generators/literal/contents/records/record.json")
+@EmbedLiteral("/test/literal/contents/records/record.json")
 var recordLiteral;
 
 @ShouldGenerate(r"""
 const _$mapLiteral = {"#": 0};
 """)
-@EmbedLiteral("/test/generators/literal/contents/maps/map.json")
+@EmbedLiteral("/test/literal/contents/maps/map.json")
 var mapLiteral;
 
 // Any of the reserved Dart keywords should be prefixed with a '$' sign
@@ -91,5 +97,23 @@ const _$reservedWordsAsRecordField = (
   $with: null
 );
 """)
-@EmbedLiteral("/test/generators/literal/contents/reserved_words.json")
+@EmbedLiteral("/test/literal/contents/reserved_words.json")
 var reservedWordsAsRecordField;
+
+@ShouldGenerate(r"""
+const _$setPattern = {0, 1, 2, 3, 4, 5};
+""")
+@EmbedLiteral("/test/literal/contents/common/array.json")
+Set? setPattern;
+
+@ShouldGenerate(r"""
+const _$recordPattern = (a: 0, b: 0.0);
+""")
+@EmbedLiteral("/test/literal/contents/records/record.json")
+({int a, double b})? recordPattern;
+
+@ShouldGenerate(r"""
+const _$mapPattern = {"a": 0, "b": 0.0, "c": true};
+""")
+@EmbedLiteral("/test/literal/contents/records/record.json")
+Map<String, dynamic>? mapPattern;
