@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   analyzer: ">=5.2.0 <7.0.0"
-  embed_annotation: ^1.0.0
+  embed_annotation: ^1.1.0
   build: ^2.4.1
   source_gen: ^1.4.0
   path: ^1.8.3
