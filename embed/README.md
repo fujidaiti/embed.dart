@@ -163,7 +163,11 @@ flutter pub run build_runner clean
 
 ## Examples
 
-You can find many more examples in the [embed/test/src](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/generators) directory and [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart).
+You can find many more examples in the following resources:
+
+- [embed/test/literal/literal_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/literal/literal_embedding_generator_test_src.dart)
+- [embed/test/str/str_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/blob/master/embed/test/str/str_embedding_generator_test_src.dart)
+- [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart)
 
 <br/>
 
@@ -284,6 +288,29 @@ You can see that the given JSON data is converted as a [record object](https://d
 
 One more thing, when a [reserved keyword](https://dart.dev/language/keywords) like `if` is used as a JSON key, the code generator automatically adds a `$` sign at the beginning of the key; for example, in the above example, a JSON key `default` is converted to `$default` in the dart code.
 
+#### Preprocessing
+
+In the previous example, all JSON keys are converted to camelCase, and if any reserved Dart keywords are used as JSON keys, they are prefixed with a `$` sign to avoid syntax errors. This processing is done by [Preprocessor](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/Preprocessor-class.html)s. You can specify preprocessors to be applied to the content in the constructor of [EmbedLiteral](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/EmbedLiteral-class.html).
+
+```dart
+@EmbedLiteral(
+  "config.json", 
+	preprocessors = [
+    Preprocessor.recase, // e.g. converts 'snake_case' to 'snakeCase'
+    Preprocessor.escapeReservedKeywords, // e.g. converts 'if' to '$if'
+    Preprocessor.replace("#", "0x"), // e.g. converts "#fff" to "0xfff"
+  ],
+)
+const config = _$config;
+```
+
+These preprocessors are applied recursively to all elements in the content, in the order specified. By default, [Recase](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/Recase-class.html) and [EscapeReservedKeywords](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/EscapeReservedKeywords-class.html) are applied, but you can disable this behavior by explicitly specifying an empty list to the `preprocessors` parameter:
+
+```dart
+@EmbedLiteral("config.json", preprocessor = const [])
+const config = _$config;
+```
+
 #### How is the data type determined?
 
 The code generator tries to represent map-like data as records rather than `Map`s whenever possible. For example, the following JSON file is converted to a record because the all the keys have a valid format as record field names:
@@ -321,17 +348,26 @@ This rule is applied recursively if the input file contains nestd data structure
 
 #### How to restrict the structure of data to be embedded?
 
-Currently, you can't LITERALLY restrict the types of generated dart objects. Whether a JSON data is embedded as a `Map` literal or a record literal depends on the content of the input file. However, it is easy to tell the Dart compiler what shape of data you really want and have a static error occur if the generated code does not match those types.
+You can restrict the types of generated dart objects by specifying concrete types to annotated top level variables.
 
 ```dart
-// This is what you really want
-typedef Config = ({ String url, String apiKey });
+// Suppose you are only interested in the 'name' and 'publish_to' fields in the pubspec.yaml
+typedef Pubspec = ({ String name, String publishTo });
 
-@EmbedLiteral("config.json")
-const Config config = _$config; // Expects `_$config` to be of type `Config`
+@EmbedLiteral("/pubspec.yaml")
+const Pubspec pubspec = _$pubspec; // Expects `_$pubspec` to be of type `Pubspec`
+
+// Or if you prefer a Map to a Record
+@EmbedLiteral("/pubspec.yaml")
+const Map pubspecMap = _$pubspecMap;
 ```
 
-If the generated object `_$config` is not of type `Config`, the dart analyzer will raise a static error telling you that the input file does not meet your requirements.
+Then, the build_runner will generates the following:
+
+```dart
+const _$pubspec = (name: "ExampleApp", publishTo: "none");
+const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none"};
+```
 
 <br/>
 
@@ -357,7 +393,7 @@ flutter clean && flutter pub run build_runner build
 
 ## Roadmap
 
-- [ ] Restrict the type of dart object to embed by giving the corresponding variable a concrete type
+- [x] ~~Restrict the type of dart object to embed by giving the corresponding variable a concrete type~~ ➡️ Available from v1.1.0
 
 <br/>
 
