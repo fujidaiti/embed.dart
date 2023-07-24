@@ -367,7 +367,7 @@ Then, the build_runner will generates the following:
 
 ```dart
 const _$pubspec = (name: "ExampleApp", publishTo: "none");
-const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none"};
+const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none", "version": ... };
 ```
 
 <br/>
