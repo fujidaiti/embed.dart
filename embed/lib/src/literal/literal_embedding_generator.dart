@@ -28,10 +28,10 @@ class LiteralEmbeddingGenerator extends EmbeddingGenerator<EmbedLiteral> {
 
 Preprocessor _readPreprocessor(ConstantReader reader) {
   if (reader.instanceOf(TypeChecker.fromRuntime(Recase))) {
-    return const Recase();
+    return Preprocessor.recase;
   }
   if (reader.instanceOf(TypeChecker.fromRuntime(EscapeReservedKeywords))) {
-    return const EscapeReservedKeywords();
+    return Preprocessor.escapeReservedKeywords;
   }
   if (reader.instanceOf(TypeChecker.fromRuntime(Replace))) {
     return Replace(
