@@ -416,7 +416,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## Support
 
-Please give me a star if you like this package. It will motivate me!
+Please [give me a star](https://github.com/fujidaiti/embed.dart.git) on GitHub if you like this package. It will motivate me!
 
 <br />
 
