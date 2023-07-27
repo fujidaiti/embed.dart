@@ -308,7 +308,7 @@ const config = _$config;
 These preprocessors are applied recursively to all elements in the content, in the order specified. By default, [Recase](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/Recase-class.html) and [EscapeReservedKeywords](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/EscapeReservedKeywords-class.html) are applied, but you can disable this behavior by explicitly specifying an empty list to the `preprocessors` parameter:
 
 ```dart
-@EmbedLiteral("config.json", preprocessor = const [])
+@EmbedLiteral("config.json", preprocessors = const [])
 const config = _$config;
 ```
 
