@@ -66,8 +66,9 @@ int main(void) {
   - [I edited my json file to embed, but the generated code doesn't update even when I run build\_runner again](#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
-- [Links](#links)
+- [Support](#support)
 - [Thanks](#thanks)
+- [Links](#links)
 
 <br/>
 
@@ -413,14 +414,20 @@ Don't forget to give the project a star! Thanks again!
 
 <br />
 
+## Support
+
+Please give me a star if you like this package. It will motivate me!
+
+<br />
+
+## Thanks
+
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
+
+<br/>
+
 ## Links
 
 - [API Documentation](https://pub.dev/documentation/embed_annotation/latest/)
 - pub.dev ([embed](https://pub.dev/packages/embed), [embed_annotation](https://pub.dev/packages/embed_annotation))
 - GitHub [repository](https://github.com/fujidaiti/embed.dart)
-
-<br/>
-
-## Thanks
-
-* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
