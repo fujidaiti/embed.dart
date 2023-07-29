@@ -1,3 +1,0 @@
-
-This file contains a leading blank line
-and a trailing blank line.

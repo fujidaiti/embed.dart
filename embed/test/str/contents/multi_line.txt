@@ -1,2 +1,0 @@
-The first line of the multi-line text
-The second line of the multi-line text
