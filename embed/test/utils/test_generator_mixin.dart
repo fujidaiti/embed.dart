@@ -10,6 +10,7 @@ import 'package:source_gen/src/constants/reader.dart';
 
 import 'mock_constant_reader.dart';
 import 'mock_file.dart';
+import 'test_annotation.dart';
 
 mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
   final Map<String, String> _cachedContents = {};
@@ -32,8 +33,9 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
     final fakeContentPath = switch ((content, extension)) {
       (var content?, var extension?) =>
         _cacheContent(content.stringValue, extension.stringValue),
-      _ => throw StateError("'content' and 'extension' fields must exist in "
-          "${annotation.objectValue.type!.getDisplayString(withNullability: false)}"),
+      _ => throw StateError(
+          "'${annotation.objectValue.type!.getDisplayString(withNullability: false)}' "
+          "must implements '$TestAnnotation'"),
     };
 
     final pathReader = MockConstantReader();
