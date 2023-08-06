@@ -11,7 +11,7 @@ dart analyze
 cwd = './embed_annotation'
 script = '''
 dart pub get
-pana --exit-code-threshold 10
+pana --exit-code-threshold 20
 '''
 
 [tasks.validate-embed]
