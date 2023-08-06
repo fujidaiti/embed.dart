@@ -32,7 +32,8 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
       ".json" => jsonDecode(stringContent),
       ".yaml" || ".yml" => loadYaml(stringContent),
       ".toml" => TomlDocument.parse(stringContent).toMap(),
-      _ => UsageError("$EmbedLiteral does not support '*$fileExtension'"),
+      _ => UsageError("Invalid file extensioin: $EmbedLiteral "
+          "does not support '*$fileExtension'"),
     };
   }
 }
