@@ -66,8 +66,9 @@ int main(void) {
   - [I edited my json file to embed, but the generated code doesn't update even when I run build\_runner again](#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
-- [Links](#links)
+- [Support](#support)
 - [Thanks](#thanks)
+- [Links](#links)
 
 <br/>
 
@@ -308,7 +309,7 @@ const config = _$config;
 These preprocessors are applied recursively to all elements in the content, in the order specified. By default, [Recase](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/Recase-class.html) and [EscapeReservedKeywords](https://pub.dev/documentation/embed_annotation/latest/embed_annotation/EscapeReservedKeywords-class.html) are applied, but you can disable this behavior by explicitly specifying an empty list to the `preprocessors` parameter:
 
 ```dart
-@EmbedLiteral("config.json", preprocessor = const [])
+@EmbedLiteral("config.json", preprocessors = const [])
 const config = _$config;
 ```
 
@@ -413,14 +414,20 @@ Don't forget to give the project a star! Thanks again!
 
 <br />
 
+## Support
+
+Please [give me a star](https://github.com/fujidaiti/embed.dart.git) on GitHub if you like this package. It will motivate me!
+
+<br />
+
+## Thanks
+
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
+
+<br/>
+
 ## Links
 
 - [API Documentation](https://pub.dev/documentation/embed_annotation/latest/)
 - pub.dev ([embed](https://pub.dev/packages/embed), [embed_annotation](https://pub.dev/packages/embed_annotation))
 - GitHub [repository](https://github.com/fujidaiti/embed.dart)
-
-<br/>
-
-## Thanks
-
-* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
