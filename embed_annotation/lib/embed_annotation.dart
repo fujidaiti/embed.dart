@@ -72,7 +72,7 @@ class EmbedLiteral extends Embed {
   }) : super._();
 
   /// Preprocessors applied to the parsed content.
-  /// 
+  ///
   /// If the associated content is a structured data such as array
   /// or key-value data, the preprocessors will be applied recursively.
   final List<Preprocessor> preprocessors;
@@ -89,7 +89,7 @@ sealed class Preprocessor {
   static const escapeReservedKeywords = EscapeReservedKeywords._();
 
   /// Creates a preprocessor for text replacement.
-  /// 
+  ///
   /// See [Replace] for more details.
   factory Preprocessor.replace(
     String pattern,
@@ -106,7 +106,7 @@ sealed class Preprocessor {
 /// {@template embed_annotation.Recase}
 /// A preprocessor that converts all string keys
 /// stored in the given key-value data to camelCase.
-/// 
+///
 /// e.g. `snake_case` and `kebab-case` will be converted
 /// to `snakeCase` and `kebabCase`, respectively.
 /// {@endtemplate}

@@ -16,6 +16,9 @@ jobs:
         with:
           sdk: "stable"
 
+      - name: Install pana
+        run: dart pub global activate pana
+
       - name: Install cargo-make
         uses: actions-rs/cargo@v1
         with:
