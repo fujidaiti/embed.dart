@@ -1,4 +1,4 @@
 abstract class TestAnnotation {
-  String get content;
+  dynamic get content;
   String get extension;
 }

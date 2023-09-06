@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/src/builder/build_step.dart';
@@ -13,12 +14,20 @@ import 'mock_file.dart';
 import 'test_annotation.dart';
 
 mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
-  final Map<String, String> _cachedContents = {};
+  final Map<String, String> _cachedStringContents = {};
+  final Map<String, Uint8List> _cachedBinaryContents = {};
 
   String _cacheContent(String content, String extension) {
     final hash = Object.hash(content, extension);
     final fakeContentPath = "$hash.$extension";
-    _cachedContents[fakeContentPath] = content;
+    _cachedStringContents[fakeContentPath] = content;
+    return fakeContentPath;
+  }
+
+  String _cacheBinaryContent(Uint8List content, String extension) {
+    final hash = Object.hash(content, extension);
+    final fakeContentPath = "$hash.$extension";
+    _cachedBinaryContents[fakeContentPath] = content;
     return fakeContentPath;
   }
 
@@ -31,11 +40,12 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
     final content = annotation.peek("content");
     final extension = annotation.peek("extension");
     final fakeContentPath = switch ((content, extension)) {
-      (var content?, var extension?) =>
-        _cacheContent(content.stringValue, extension.stringValue),
+      (var content?, var extension?) => content.isString
+          ? _cacheContent(content.stringValue, extension.stringValue)
+          : _cacheBinaryContent(content.uin8tListValue, extension.stringValue),
       _ => throw StateError(
           "'${annotation.objectValue.type!.getDisplayString(withNullability: false)}' "
-          "must implements '$TestAnnotation'"),
+          "must implement '$TestAnnotation'"),
     };
 
     final pathReader = MockConstantReader();
@@ -58,13 +68,28 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
 
   @override
   File resolveContent(config, BuildStep buildStep) {
-    assert(_cachedContents.containsKey(config.path));
-    final content = _cachedContents[config.path]!;
+    final stringContent = _cachedStringContents[config.path];
+    final binaryContent = _cachedBinaryContents[config.path];
+
+    assert(stringContent != null || binaryContent != null);
+
     final contentFile = MockFile();
     when(contentFile.path).thenReturn(config.path);
-    when(contentFile.readAsString()).thenAnswer((_) async => content);
+    when(contentFile.readAsString()).thenAnswer((_) async => stringContent!);
+    when(contentFile.readAsBytes()).thenAnswer((_) async => binaryContent!);
     return contentFile;
   }
 
   List<String> get additionalAnnotationFields;
+}
+
+extension _ConstantReaderUintListExtension on ConstantReader {
+  Uint8List get uin8tListValue {
+    final list = listValue;
+    final bytes = Uint8List(list.length);
+    for (var i = 0; i < list.length; ++i) {
+      bytes[i] = list[i].toIntValue()!;
+    }
+    return bytes;
+  }
 }

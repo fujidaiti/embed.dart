@@ -27,6 +27,12 @@ const embeddedToml = _$embeddedToml;
 @EmbedLiteral("/pubspec.yaml")
 const embeddedYaml = _$embeddedYaml;
 
+@EmbedBinary("data/binary_to_embed.png")
+const embeddedBinary = _$embeddedBinary;
+
+@EmbedBinary("data/binary_to_embed.png", base64: true)
+const embeddedBinaryBase64 = _$embeddedBinaryBase64;
+
 void main() {
   // When a map-like data is converted to a record, and it contains
   // reserved Dart language keywords such as 'if' and 'case' as its field names,

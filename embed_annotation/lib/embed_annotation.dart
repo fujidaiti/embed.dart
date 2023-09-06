@@ -48,7 +48,7 @@ sealed class Embed {
 
 /// Annotation for embedding a text content as a string literal.
 class EmbedStr extends Embed {
-  /// Creates an annotatoin for embedding a text content as a string literal.
+  /// Creates an annotation for embedding a text content as a string literal.
   ///
   /// By default, the text is embedded as a [raw string literal](https://dart.dev/language/built-in-types#strings).
   /// To embed it as a normal string literal, specify [raw] as `false`.
@@ -76,6 +76,18 @@ class EmbedLiteral extends Embed {
   /// If the associated content is a structured data such as array
   /// or key-value data, the preprocessors will be applied recursively.
   final List<Preprocessor> preprocessors;
+}
+
+/// Annotation for embedding raw binary data as a List<int>
+class EmbedBinary extends Embed {
+  /// Creates an annotation for embedding raw binary data. If [base64] is true,
+  /// the binary data will be encoded as a base64 string, otherwise it will be
+  /// encoded as a List<int>.
+  const EmbedBinary(super.path, {this.base64 = false}) : super._();
+
+  /// Specifies whether the generated literal should be a base64 string or a
+  /// List<int>.
+  final bool base64;
 }
 
 /// The base class of preprocessors.
