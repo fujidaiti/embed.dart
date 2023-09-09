@@ -21,16 +21,7 @@ class BinaryEmbedder extends Embedder<EmbedBinary> {
   }
 
   String _encodeAsList(Uint8List bytes) {
-    final builder = StringBuffer();
-    builder.writeln('[');
-    for (var i = 0; i < bytes.length; ++i) {
-      builder
-        ..write('  ')
-        ..write(bytes[i])
-        ..writeln(',');
-    }
-    builder.write(']');
-    return bytes.toString();
+    return '$bytes';
   }
 
   String _encodeBase64(Uint8List bytes) {
