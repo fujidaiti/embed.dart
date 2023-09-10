@@ -260,7 +260,7 @@ This is a useful text for you.
 Use `EmbedBinary` to embed a content file as a binary data.
 
 ```dart
-@EmbedBinary("avator.png")
+@EmbedBinary("/assets/avator.png")
 const avator = _$avator;
 ```
 
