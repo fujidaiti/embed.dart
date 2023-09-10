@@ -168,8 +168,9 @@ flutter pub run build_runner clean
 
 You can find many more examples in the following resources:
 
-- [embed/test/literal/literal_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/tree/master/embed/test/literal/literal_embedding_generator_test_src.dart)
-- [embed/test/str/str_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/blob/master/embed/test/str/str_embedding_generator_test_src.dart)
+- [embed/test/literal/literal_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/blob/master/embed/test/literal/literal_embedding_generator_test.dart#L54)
+- [embed/test/str/str_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/blob/master/embed/test/str/str_embedding_generator_test.dart#L52)
+- [embed/test/binary/binary_embedding_generator_test_src.dart](https://github.com/fujidaiti/embed.dart/blob/master/embed/test/binary/binary_embedding_generator_test.dart#L51)
 - [example/lib/example.dart](https://github.com/fujidaiti/embed.dart/blob/master/example/lib/example.dart)
 
 <br/>
