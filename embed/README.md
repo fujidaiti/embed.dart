@@ -431,6 +431,15 @@ flutter clean && flutter pub run build_runner build
 
 <br/>
 
+## Contributors
+
+Thanks to all the contributors!
+
+- [@NicolaVerbeeck](https://github.com/NicolaVerbeeck): Support embedding binary files ([#13](https://github.com/fujidaiti/embed.dart/pull/13))
+- [@bramp](https://github.com/bramp): Bumped the toml and lint dependencies to their latest([#17](https://github.com/fujidaiti/embed.dart/pull/17))
+
+<br/>
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
