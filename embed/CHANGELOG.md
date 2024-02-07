@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.3.0
+
+- Update `toml` dependency to 0.15.0 (#17 by @bramp)
+- Required Dart SDK version is now 3.2 or higher
+
 ## 1.2.0
 
 - New feature: embedding binary contents (#13 by @NicolaVerbeeck)

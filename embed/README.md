@@ -177,12 +177,13 @@ You can find many more examples in the following resources:
 
 ## How to use
 
-Currently, there are 2 types of embedding methods:
+Currently, there are 3 types of embedding methods:
 
 - [Embed a text content as a String literal](#embed-a-text-content-as-a-string-literal)
+- [Embed contents as binary](#embed-contents-as-binary)
 - [Embed a structured data as a Dart object](#embed-a-structured-data-as-a-dart-object)
 
-What content to embed and how to embed it can be described using predefined annotations. For example, you can use the `EmbedStr` annotation to embed a text content as a string literal. Note that only top-level variables can be annotated, as shown below:
+What content to embed and how to embed it can be described using predefined annotations. For example, you can use the `EmbedStr` annotation to embed text content as a string literal. Note that only top-level variables can be annotated, as shown below:
 
 ```dart
 @EmbedStr(...) // This is OK
@@ -427,6 +428,15 @@ flutter clean && flutter pub run build_runner build
 ## Roadmap
 
 - [x] ~~Restrict the type of dart object to embed by giving the corresponding variable a concrete type~~ ➡️ Available from v1.1.0
+
+<br/>
+
+## Contributors
+
+Thanks to all the contributors!
+
+- [@NicolaVerbeeck](https://github.com/NicolaVerbeeck): Support embedding binary files ([#13](https://github.com/fujidaiti/embed.dart/pull/13))
+- [@bramp](https://github.com/bramp): Bumped the toml and lint dependencies to their latest([#17](https://github.com/fujidaiti/embed.dart/pull/17))
 
 <br/>
 

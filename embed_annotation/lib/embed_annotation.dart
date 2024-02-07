@@ -1,12 +1,11 @@
 library embed_annotation;
 
-/// Base class for the all annotation classes
-/// that configures how content is embedded.
+/// Base class for the all annotation classes that configures how content is embedded.
 ///
-/// Use the one of the folowing subclasses to
-/// configure how content should be embedded.
+/// Use the one of the following subclasses to configure how content should be embedded.
 ///
 /// * [EmbedStr] : For embedding a text content as a string literal.
+/// * [EmbedBinary] : For embedding a binary data as an integer list or a base64 string.
 /// * [EmbedLiteral] : For embedding a structured data as a dart object.
 ///
 /// Only top level elements can be annotated with these annotations.

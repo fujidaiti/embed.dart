@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.1
+
+- Documentation updates
+
 ## 1.2.0
 
 - Added a new annotation for embedding binary contents (#13 by @NicolaVerbeeck)
