@@ -72,7 +72,7 @@ class StringLiteral extends DartLiteral<String> {
 
   @override
   String toString() {
-    final literal = value.replaceAll('"', r'\"');
+    final literal = value.replaceAll('"', r'\"').replaceAll(r'$', r'\$');
     return '"$literal"';
   }
 }

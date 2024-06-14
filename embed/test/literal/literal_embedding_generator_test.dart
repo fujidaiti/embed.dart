@@ -243,3 +243,14 @@ const _$mapPattern = {"a": 0, "b": 0.0, "c": true};
 """,
 )
 Map<String, dynamic>? mapPattern;
+
+@TestEmbedLiteral(
+  extension: "json",
+  content: r"""
+{ "dollar": "$" }
+""",
+  shouldGenerate: r"""
+const _$stringLiteralsDollar = (dollar: "\$");
+""",
+)
+var stringLiteralsDollar;
