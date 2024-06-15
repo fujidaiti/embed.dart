@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.3.1
+
+- fix(embed): escape dollar symbol of JSON string literal (#21 by @Jumpaku)
+
 ## 1.3.0
 
 - Update `toml` dependency to 0.15.0 (#17 by @bramp)
