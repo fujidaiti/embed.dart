@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.4.0
+
+- Upgrade dependencies (#22)
+
 ## 1.3.1
 
 - fix(embed): escape dollar symbol of JSON string literal (#21 by @Jumpaku)
