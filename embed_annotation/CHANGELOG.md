@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.2
+
+- Dependency updates
+
 ## 1.2.1
 
 - Documentation updates
