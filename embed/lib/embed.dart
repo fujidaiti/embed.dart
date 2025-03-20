@@ -1,5 +1,3 @@
-library embed;
-
 import 'package:build/build.dart';
 import 'package:embed/src/binary/binary_embedding_generator.dart';
 import 'package:embed/src/literal/literal_embedding_generator.dart';

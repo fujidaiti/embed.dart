@@ -44,7 +44,7 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
           ? _cacheContent(content.stringValue, extension.stringValue)
           : _cacheBinaryContent(content.uin8tListValue, extension.stringValue),
       _ => throw StateError(
-          "'${annotation.objectValue.type!.getDisplayString(withNullability: false)}' "
+          "'${annotation.objectValue.type!.getDisplayString()}' "
           "must implement '$TestAnnotation'"),
     };
 
