@@ -261,5 +261,5 @@ extension _IsNullable on t.DartType {
         NullabilitySuffix.star => throw ShouldNeverBeHappenError(),
       };
 
-  String get displayString => getDisplayString(withNullability: isNullable);
+  String get displayString => getDisplayString();
 }

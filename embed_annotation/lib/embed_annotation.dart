@@ -1,5 +1,3 @@
-library embed_annotation;
-
 /// Base class for the all annotation classes that configures how content is embedded.
 ///
 /// Use the one of the following subclasses to configure how content should be embedded.
@@ -77,15 +75,15 @@ class EmbedLiteral extends Embed {
   final List<Preprocessor> preprocessors;
 }
 
-/// Annotation for embedding raw binary data as a List<int>
+/// Annotation for embedding raw binary data as a `Listint>`.
 class EmbedBinary extends Embed {
   /// Creates an annotation for embedding raw binary data. If [base64] is true,
   /// the binary data will be encoded as a base64 string, otherwise it will be
-  /// encoded as a List<int>.
+  /// encoded as a `List<int>`.
   const EmbedBinary(super.path, {this.base64 = false}) : super._();
 
   /// Specifies whether the generated literal should be a base64 string or a
-  /// List<int>.
+  /// `List<int>`.
   final bool base64;
 }
 

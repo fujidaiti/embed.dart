@@ -211,7 +211,7 @@ const _$reservedWordsAsRecordField = (
   $void: null,
   $when: null,
   $while: null,
-  $with: null
+  $with: null,
 );
 """,
 )
