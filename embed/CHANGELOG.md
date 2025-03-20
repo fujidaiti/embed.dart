@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.4.1
+
+- Upgrade outdated packages (#25)
+
 ## 1.4.0
 
 - Upgrade dependencies (#22)
