@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:embed/src/literal/literal_embedding_generator.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:source_gen_test/source_gen_test.dart';
@@ -58,7 +56,7 @@ class TestEmbedLiteral extends ShouldGenerate
 const _$integerLiterals = (a: 0);
 """,
 )
-var integerLiterals;
+dynamic integerLiterals;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -76,7 +74,7 @@ Map<String, int>? hexDecimalIntegerLiteral;
 const _$floatLiterals = (a: 0.0, b: -0.0);
 """,
 )
-var floatLiterals;
+dynamic floatLiterals;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -87,7 +85,7 @@ var floatLiterals;
 const _$stringLiterals = (a: "a", b: "\"b\"", c: "'c'");
 """,
 )
-var stringLiterals;
+dynamic stringLiterals;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -96,7 +94,7 @@ var stringLiterals;
 const _$booleanLiterals = (a: true, b: false);
 """,
 )
-var booleanLiterals;
+dynamic booleanLiterals;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -105,7 +103,7 @@ var booleanLiterals;
 const _$nullLiteral = (a: null);
 """,
 )
-var nullLiteral;
+dynamic nullLiteral;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -114,7 +112,7 @@ var nullLiteral;
 const _$arrayLiteral = [0, 1, 2, 3, 4, 5];
 """,
 )
-var arrayLiteral;
+dynamic arrayLiteral;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -123,7 +121,7 @@ var arrayLiteral;
 const _$recordLiteral = (a: 0, b: 0.0, c: true);
 """,
 )
-var recordLiteral;
+dynamic recordLiteral;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -132,7 +130,7 @@ var recordLiteral;
 const _$mapLiteral = {"#": 0};
 """,
 )
-var mapLiteral;
+dynamic mapLiteral;
 
 // Any of the reserved Dart keywords should be prefixed with a '$' sign
 // when it is used as a record field name.
@@ -215,7 +213,7 @@ const _$reservedWordsAsRecordField = (
 );
 """,
 )
-var reservedWordsAsRecordField;
+dynamic reservedWordsAsRecordField;
 
 @TestEmbedLiteral(
   extension: "json",
@@ -253,4 +251,4 @@ Map<String, dynamic>? mapPattern;
 const _$stringLiteralsDollar = (dollar: "\$");
 """,
 )
-var stringLiteralsDollar;
+dynamic stringLiteralsDollar;
