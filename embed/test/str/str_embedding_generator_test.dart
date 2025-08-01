@@ -75,7 +75,7 @@ The second line of the multi-line text
 )
 var multiLine;
 
-// // Leanding and trailing blank lines should be preserved.
+// Leading and trailing blank lines should be preserved.
 @TestStrLiteral(
   extension: "json",
   content: r"""
@@ -94,7 +94,7 @@ and a trailing blank line.
 )
 var textWithBlankLines;
 
-// Content should be able to contain qutation marks.
+// Content should be able to contain quotation marks.
 @TestStrLiteral(
   extension: "txt",
   content: r"""a "b" c 'd' e \"f\'""",
