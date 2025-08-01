@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/src/builder/build_step.dart';
 import 'package:embed/src/common/embed_generator.dart';
 import 'package:embed_annotation/embed_annotation.dart';
@@ -33,7 +33,7 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
 
   @override
   FutureOr<String> generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
