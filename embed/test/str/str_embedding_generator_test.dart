@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:embed/src/str/str_embedding_generator.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:source_gen_test/source_gen_test.dart';
@@ -58,7 +56,7 @@ This is a single line text
 ''';
 """,
 )
-var singleLine;
+dynamic singleLine;
 
 // The content should be embedded as is, even if it has multiple lines.
 @TestStrLiteral(
@@ -73,7 +71,7 @@ The second line of the multi-line text
 ''';
 """,
 )
-var multiLine;
+dynamic multiLine;
 
 // Leading and trailing blank lines should be preserved.
 @TestStrLiteral(
@@ -92,7 +90,7 @@ and a trailing blank line.
 ''';
 """,
 )
-var textWithBlankLines;
+dynamic textWithBlankLines;
 
 // Content should be able to contain quotation marks.
 @TestStrLiteral(
@@ -104,7 +102,7 @@ a "b" c 'd' e \"f\'
 ''';
 """,
 )
-var quotationMarks;
+dynamic quotationMarks;
 
 // Content should be embedded as a regular string literal.
 @TestStrLiteral(
@@ -117,4 +115,4 @@ This is a single line text
 ''';
 """,
 )
-var regularStringLiteral;
+dynamic regularStringLiteral;

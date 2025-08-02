@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:embed/src/binary/binary_embedding_generator.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:source_gen_test/source_gen_test.dart';
@@ -55,7 +53,7 @@ class TestBinary extends ShouldGenerate implements TestAnnotation, EmbedBinary {
 const _$embedAsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 """,
 )
-var embedAsList;
+dynamic embedAsList;
 
 // The content should be embedded as base64
 @TestBinary(
@@ -66,4 +64,4 @@ var embedAsList;
 const _$embedAsBase64 = 'AQIDBAUGBwgJCg==';
 """,
 )
-var embedAsBase64;
+dynamic embedAsBase64;
