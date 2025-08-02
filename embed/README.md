@@ -4,7 +4,7 @@
 <h1 align="center" style="border-bottom: none">embed.dart</h1>
   <br />
   <p align="center">
-  	Code generation for embedding arbitrary file content into Dart code
+   Code generation for embedding arbitrary file content into Dart code
     <br />
     <br />
     <a href="https://github.com/fujidaiti/embed.dart#index"><strong>Explore the docs »</strong></a>
@@ -18,12 +18,9 @@
   </p>
 </div>
 
-
-
 <br/>
 
 <br/>
-
 
 ## Motivation
 
@@ -66,6 +63,7 @@ int main(void) {
 - [Troubleshooting Guide](#troubleshooting-guide)
   - [I edited my json file to embed, but the generated code doesn't update even when I run build\_runner again](#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again)
 - [Roadmap](#roadmap)
+- [Contributors](#contributors)
 - [Contributing](#contributing)
 - [Support](#support)
 - [Thanks](#thanks)
@@ -318,7 +316,7 @@ const _$config = (
 );
 ```
 
-You can see that the given JSON data is converted as a [record object](https://dart.dev/language/records). And if you take a closer look at the output, you may notice that some JSON keys are converted to camelCase. This is because it is the recommended style for record type field names. 
+You can see that the given JSON data is converted as a [record object](https://dart.dev/language/records). And if you take a closer look at the output, you may notice that some JSON keys are converted to camelCase. This is because it is the recommended style for record type field names.
 
 One more thing, when a [reserved keyword](https://dart.dev/language/keywords) like `if` is used as a JSON key, the code generator automatically adds a `$` sign at the beginning of the key; for example, in the above example, a JSON key `default` is converted to `$default` in the dart code.
 
@@ -329,7 +327,7 @@ In the previous example, all JSON keys are converted to camelCase, and if any re
 ```dart
 @EmbedLiteral(
   "config.json", 
-	preprocessors = [
+ preprocessors = [
     Preprocessor.recase, // e.g. converts 'snake_case' to 'snakeCase'
     Preprocessor.escapeReservedKeywords, // e.g. converts 'if' to '$if'
     Preprocessor.replace("#", "0x"), // e.g. converts "#fff" to "0xfff"
@@ -437,6 +435,11 @@ Thanks to all the contributors!
 
 - [@NicolaVerbeeck](https://github.com/NicolaVerbeeck): Support embedding binary files ([#13](https://github.com/fujidaiti/embed.dart/pull/13))
 - [@bramp](https://github.com/bramp): Bumped the toml and lint dependencies to their latest([#17](https://github.com/fujidaiti/embed.dart/pull/17))
+- [@Jumpaku](https://github.com/Jumpaku): fix(embed): escape dollar symbol of JSON string literal ([#21](https://github.com/fujidaiti/embed.dart/pull/21))
+- [@FrankenApps](https://github.com/FrankenApps):
+  - Update source_gen to version 3.0.0 and migrate to new element model API. ([#27](https://github.com/fujidaiti/embed.dart/pull/27))
+  - Bump lints package. ([#29](https://github.com/fujidaiti/embed.dart/pull/29))
+  - Fix typos. ([#28](https://github.com/fujidaiti/embed.dart/pull/28))
 
 <br/>
 
@@ -463,7 +466,7 @@ Please [give me a star](https://github.com/fujidaiti/embed.dart.git) on GitHub i
 
 ## Thanks
 
-* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
+- [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) by [@othneildrew](https://github.com/othneildrew)
 
 <br/>
 
