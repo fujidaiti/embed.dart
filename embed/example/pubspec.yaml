@@ -9,4 +9,4 @@ dependencies:
     path: ../../embed_annotation
 
 dev_dependencies:
-  lints: ^3.0.0
+  lints: ^6.0.0
