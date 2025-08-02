@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.5.0
+
+- Require `analyzer` 7.4.0 or higher to migrate to [the analyzer's new element models](https://github.com/dart-lang/sdk/blob/main/pkg/analyzer/doc/element_model_migration_guide.md) ([#27](https://github.com/fujidaiti/embed.dart/pull/27) by @FrankenApps, [#30](https://github.com/fujidaiti/embed.dart/pull/30))
+
 ## 1.4.1
 
 - Upgrade outdated packages (#25)
