@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 
 abstract class Embedder<E extends Embed> {
@@ -11,6 +11,6 @@ abstract class Embedder<E extends Embed> {
 
   FutureOr<String> getEmbeddingOf(
     File content,
-    TopLevelVariableElement element,
+    TopLevelVariableElement2 element,
   );
 }
