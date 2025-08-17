@@ -92,7 +92,6 @@ class EmbedBinary extends Embed {
 
 /// The base class of preprocessors.
 sealed class Preprocessor {
-
   /// Creates a preprocessor for text replacement.
   ///
   /// See [Replace] for more details.
