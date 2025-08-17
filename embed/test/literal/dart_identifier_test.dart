@@ -1,11 +1,11 @@
 import 'package:embed/src/literal/dart_identifier.dart';
 import 'package:test/test.dart';
 
-const validIdentifiers = [r"$", r"$var", r"_"];
-const invalidIdentifiers = ["0", "@", "0a"];
+const validIdentifiers = [r'$', r'$var', '_'];
+const invalidIdentifiers = ['0', '@', '0a'];
 
 void main() {
-  group("isValidDartIdentifier:", () {
+  group('isValidDartIdentifier:', () {
     for (final identifier in validIdentifiers) {
       test("'$identifier' is a valid identifier", () {
         expect(

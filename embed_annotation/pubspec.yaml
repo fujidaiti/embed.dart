@@ -8,3 +8,4 @@ environment:
 
 dev_dependencies:
   lints: ^6.0.0
+  all_lint_rules_community: ^0.0.3

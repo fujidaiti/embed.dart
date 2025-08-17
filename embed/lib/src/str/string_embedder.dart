@@ -12,7 +12,7 @@ class StringEmbedder extends Embedder<EmbedStr> {
   FutureOr<String> getEmbeddingOf(
       File content, TopLevelVariableElement2 element) async {
     final string = await content.readAsString();
-    final r = config.raw ? "r" : "";
+    final r = config.raw ? 'r' : '';
     return "$r'''\n$string\n'''";
   }
 }

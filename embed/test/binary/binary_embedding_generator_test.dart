@@ -7,8 +7,8 @@ import '../utils/test_generator_mixin.dart';
 
 Future<void> main() async {
   final libraryReader = await initializeLibraryReaderForDirectory(
-    "test/binary",
-    "binary_embedding_generator_test.dart",
+    'test/binary',
+    'binary_embedding_generator_test.dart',
   );
 
   initializeBuildLogTracking();
@@ -17,7 +17,7 @@ Future<void> main() async {
 
 class _TestGenerator extends BinaryEmbeddingGenerator with TestGeneratorMixin {
   @override
-  List<String> get additionalAnnotationFields => const ["base64"];
+  List<String> get additionalAnnotationFields => const ['base64'];
 }
 
 class TestBinary extends ShouldGenerate implements TestAnnotation, EmbedBinary {
@@ -47,17 +47,17 @@ class TestBinary extends ShouldGenerate implements TestAnnotation, EmbedBinary {
 
 // The content should be embedded as is.
 @TestBinary(
-  extension: "dat",
+  extension: 'dat',
   content: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$embedAsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-""",
+''',
 )
 dynamic embedAsList;
 
 // The content should be embedded as base64
 @TestBinary(
-  extension: "dat",
+  extension: 'dat',
   content: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   base64: true,
   shouldGenerate: r"""

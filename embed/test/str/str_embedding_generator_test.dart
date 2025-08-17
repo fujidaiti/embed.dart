@@ -7,8 +7,8 @@ import '../utils/test_generator_mixin.dart';
 
 Future<void> main() async {
   final libraryReader = await initializeLibraryReaderForDirectory(
-    "test/str",
-    "str_embedding_generator_test.dart",
+    'test/str',
+    'str_embedding_generator_test.dart',
   );
 
   initializeBuildLogTracking();
@@ -17,7 +17,7 @@ Future<void> main() async {
 
 class _TestGenerator extends StrEmbeddingGenerator with TestGeneratorMixin {
   @override
-  List<String> get additionalAnnotationFields => const ["raw"];
+  List<String> get additionalAnnotationFields => const ['raw'];
 }
 
 class TestStrLiteral extends ShouldGenerate
@@ -48,8 +48,8 @@ class TestStrLiteral extends ShouldGenerate
 
 // The content should be embedded as is.
 @TestStrLiteral(
-  extension: "txt",
-  content: "This is a single line text",
+  extension: 'txt',
+  content: 'This is a single line text',
   shouldGenerate: r"""
 const _$singleLine = r'''
 This is a single line text
@@ -60,10 +60,10 @@ dynamic singleLine;
 
 // The content should be embedded as is, even if it has multiple lines.
 @TestStrLiteral(
-  extension: "txt",
-  content: r"""
+  extension: 'txt',
+  content: '''
 The first line of the multi-line text
-The second line of the multi-line text""",
+The second line of the multi-line text''',
   shouldGenerate: r"""
 const _$multiLine = r'''
 The first line of the multi-line text
@@ -75,12 +75,12 @@ dynamic multiLine;
 
 // Leading and trailing blank lines should be preserved.
 @TestStrLiteral(
-  extension: "json",
-  content: r"""
+  extension: 'json',
+  content: '''
 
 This file contains a leading blank line
 and a trailing blank line.
-""",
+''',
   shouldGenerate: r"""
 const _$textWithBlankLines = r'''
 
@@ -94,7 +94,7 @@ dynamic textWithBlankLines;
 
 // Content should be able to contain quotation marks.
 @TestStrLiteral(
-  extension: "txt",
+  extension: 'txt',
   content: r"""a "b" c 'd' e \"f\'""",
   shouldGenerate: r"""
 const _$quotationMarks = r'''
@@ -107,8 +107,8 @@ dynamic quotationMarks;
 // Content should be embedded as a regular string literal.
 @TestStrLiteral(
   raw: false,
-  extension: "txt",
-  content: "This is a single line text",
+  extension: 'txt',
+  content: 'This is a single line text',
   shouldGenerate: r"""
 const _$regularStringLiteral = '''
 This is a single line text
