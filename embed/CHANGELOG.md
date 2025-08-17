@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.6.0
+
+- Allow analyzer `>=7.4.0 <9.0.0`. ([#32](https://github.com/fujidaiti/embed.dart/pull/32) by @FrankenApps)
+- Require source_gen `>=3.1.0`. ([#33](https://github.com/fujidaiti/embed.dart/pull/33) by @FrankenApps)
+
 ## 1.5.0
 
 - Require `analyzer` 7.4.0 or higher to migrate to [the analyzer's new element models](https://github.com/dart-lang/sdk/blob/main/pkg/analyzer/doc/element_model_migration_guide.md) ([#27](https://github.com/fujidaiti/embed.dart/pull/27) by @FrankenApps, [#30](https://github.com/fujidaiti/embed.dart/pull/30))

@@ -440,6 +440,8 @@ Thanks to all the contributors!
   - Update source_gen to version 3.0.0 and migrate to new element model API. ([#27](https://github.com/fujidaiti/embed.dart/pull/27))
   - Bump lints package. ([#29](https://github.com/fujidaiti/embed.dart/pull/29))
   - Fix typos. ([#28](https://github.com/fujidaiti/embed.dart/pull/28))
+  - Loosen analyzer version constraint. ([#32](https://github.com/fujidaiti/embed.dart/pull/32))
+  - Replace deprecated TypeChecker.fromRuntime with TypeChecker.typeNamed. ([#33](https://github.com/fujidaiti/embed.dart/pull/33))
 
 <br/>
 
