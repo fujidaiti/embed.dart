@@ -75,7 +75,7 @@ class EmbedLiteral extends Embed {
   final List<Preprocessor> preprocessors;
 }
 
-/// Annotation for embedding raw binary data as a `Listint>`.
+/// Annotation for embedding raw binary data as a `List<int>`.
 class EmbedBinary extends Embed {
   /// Creates an annotation for embedding raw binary data. If [base64] is true,
   /// the binary data will be encoded as a base64 string, otherwise it will be
