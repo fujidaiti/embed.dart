@@ -8,7 +8,8 @@ import 'package:source_gen/source_gen.dart';
 class LiteralEmbeddingGenerator extends EmbeddingGenerator<EmbedLiteral> {
   @override
   Embedder<EmbedLiteral> createEmbedderFrom(ConstantReader annotation) {
-    assert(annotation.instanceOf(TypeChecker.fromRuntime(EmbedLiteral)));
+    assert(annotation.instanceOf(const TypeChecker.typeNamed(EmbedLiteral,
+        inPackage: "embed_annotation")));
     final contentPath = annotation.read("path").stringValue;
     final preprocessors = annotation
         .read("preprocessors")
@@ -27,13 +28,16 @@ class LiteralEmbeddingGenerator extends EmbeddingGenerator<EmbedLiteral> {
 }
 
 Preprocessor _readPreprocessor(ConstantReader reader) {
-  if (reader.instanceOf(TypeChecker.fromRuntime(Recase))) {
+  if (reader.instanceOf(
+      const TypeChecker.typeNamed(Recase, inPackage: "embed_annotation"))) {
     return Preprocessor.recase;
   }
-  if (reader.instanceOf(TypeChecker.fromRuntime(EscapeReservedKeywords))) {
+  if (reader.instanceOf(const TypeChecker.typeNamed(EscapeReservedKeywords,
+      inPackage: "embed_annotation"))) {
     return Preprocessor.escapeReservedKeywords;
   }
-  if (reader.instanceOf(TypeChecker.fromRuntime(Replace))) {
+  if (reader.instanceOf(
+      const TypeChecker.typeNamed(Replace, inPackage: "embed_annotation"))) {
     return Replace(
       reader.read("pattern").stringValue,
       reader.read("replacement").stringValue,

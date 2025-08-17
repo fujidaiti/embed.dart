@@ -7,7 +7,8 @@ import 'package:source_gen/source_gen.dart';
 class StrEmbeddingGenerator extends EmbeddingGenerator<EmbedStr> {
   @override
   Embedder<EmbedStr> createEmbedderFrom(ConstantReader annotation) {
-    assert(annotation.instanceOf(TypeChecker.fromRuntime(EmbedStr)));
+    assert(annotation.instanceOf(
+        const TypeChecker.typeNamed(EmbedStr, inPackage: "embed_annotation")));
     return StringEmbedder(EmbedStr(
       annotation.read("path").stringValue,
       raw: annotation.read("raw").boolValue,
