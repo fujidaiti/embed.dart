@@ -8,10 +8,10 @@ class StrEmbeddingGenerator extends EmbeddingGenerator<EmbedStr> {
   @override
   Embedder<EmbedStr> createEmbedderFrom(ConstantReader annotation) {
     assert(annotation.instanceOf(
-        const TypeChecker.typeNamed(EmbedStr, inPackage: "embed_annotation")));
+        const TypeChecker.typeNamed(EmbedStr, inPackage: 'embed_annotation')));
     return StringEmbedder(EmbedStr(
-      annotation.read("path").stringValue,
-      raw: annotation.read("raw").boolValue,
+      annotation.read('path').stringValue,
+      raw: annotation.read('raw').boolValue,
     ));
   }
 }

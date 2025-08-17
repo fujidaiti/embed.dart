@@ -11,18 +11,15 @@ sealed class TypeConstraint {
     required this.displayString,
   });
 
-  final bool isNullable;
-  final String displayString;
-
   factory TypeConstraint.from(t.DartType type) {
     switch (type) {
       case t.DynamicType _ || t.InvalidType _:
         return const DynamicType();
-      case t.RecordType type when type.namedFields.isEmpty:
+      case final t.RecordType type when type.namedFields.isEmpty:
         return UnnamedRecordType.from(type);
-      case t.RecordType type when type.positionalFields.isEmpty:
+      case final t.RecordType type when type.positionalFields.isEmpty:
         return NamedRecordType.from(type);
-      case t.InterfaceType type:
+      case final t.InterfaceType type:
         if (type.isDartCoreObject) {
           return ObjectType.from(type);
         } else if (type.isDartCoreInt) {
@@ -44,6 +41,9 @@ sealed class TypeConstraint {
 
     throw UsageError("'$type' type is not supported");
   }
+
+  final bool isNullable;
+  final String displayString;
 
   @override
   String toString() => displayString;
@@ -249,7 +249,7 @@ class DynamicType extends AnyType {
   const DynamicType()
       : super(
           isNullable: true,
-          displayString: "dynamic",
+          displayString: 'dynamic',
         );
 }
 

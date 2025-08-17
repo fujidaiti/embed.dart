@@ -1,9 +1,12 @@
-/// Base class for the all annotation classes that configures how content is embedded.
+/// Base class for the all annotation classes that configures
+/// how content is embedded.
 ///
-/// Use the one of the following subclasses to configure how content should be embedded.
+/// Use the one of the following subclasses to configure how content should be
+/// embedded.
 ///
 /// * [EmbedStr] : For embedding a text content as a string literal.
-/// * [EmbedBinary] : For embedding a binary data as an integer list or a base64 string.
+/// * [EmbedBinary] : For embedding a binary data as an integer list or a
+///   base64 string.
 /// * [EmbedLiteral] : For embedding a structured data as a dart object.
 ///
 /// Only top level elements can be annotated with these annotations.
@@ -89,13 +92,6 @@ class EmbedBinary extends Embed {
 
 /// The base class of preprocessors.
 sealed class Preprocessor {
-  const Preprocessor._();
-
-  /// {@macro embed_annotation.Recase}
-  static const recase = Recase._();
-
-  /// {@macro embed_annotation.EscapeReservedKeywords}
-  static const escapeReservedKeywords = EscapeReservedKeywords._();
 
   /// Creates a preprocessor for text replacement.
   ///
@@ -110,6 +106,13 @@ sealed class Preprocessor {
         replacement,
         onlyFirst: onlyFirst,
       );
+  const Preprocessor._();
+
+  /// {@macro embed_annotation.Recase}
+  static const recase = Recase._();
+
+  /// {@macro embed_annotation.EscapeReservedKeywords}
+  static const escapeReservedKeywords = EscapeReservedKeywords._();
 }
 
 /// {@template embed_annotation.Recase}

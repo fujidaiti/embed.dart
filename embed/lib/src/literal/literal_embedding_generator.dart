@@ -9,10 +9,10 @@ class LiteralEmbeddingGenerator extends EmbeddingGenerator<EmbedLiteral> {
   @override
   Embedder<EmbedLiteral> createEmbedderFrom(ConstantReader annotation) {
     assert(annotation.instanceOf(const TypeChecker.typeNamed(EmbedLiteral,
-        inPackage: "embed_annotation")));
-    final contentPath = annotation.read("path").stringValue;
+        inPackage: 'embed_annotation')));
+    final contentPath = annotation.read('path').stringValue;
     final preprocessors = annotation
-        .read("preprocessors")
+        .read('preprocessors')
         .listValue
         .map(ConstantReader.new)
         .map(_readPreprocessor)
@@ -29,19 +29,19 @@ class LiteralEmbeddingGenerator extends EmbeddingGenerator<EmbedLiteral> {
 
 Preprocessor _readPreprocessor(ConstantReader reader) {
   if (reader.instanceOf(
-      const TypeChecker.typeNamed(Recase, inPackage: "embed_annotation"))) {
+      const TypeChecker.typeNamed(Recase, inPackage: 'embed_annotation'))) {
     return Preprocessor.recase;
   }
   if (reader.instanceOf(const TypeChecker.typeNamed(EscapeReservedKeywords,
-      inPackage: "embed_annotation"))) {
+      inPackage: 'embed_annotation'))) {
     return Preprocessor.escapeReservedKeywords;
   }
   if (reader.instanceOf(
-      const TypeChecker.typeNamed(Replace, inPackage: "embed_annotation"))) {
+      const TypeChecker.typeNamed(Replace, inPackage: 'embed_annotation'))) {
     return Replace(
-      reader.read("pattern").stringValue,
-      reader.read("replacement").stringValue,
-      onlyFirst: reader.read("onlyFirst").boolValue,
+      reader.read('pattern').stringValue,
+      reader.read('replacement').stringValue,
+      onlyFirst: reader.read('onlyFirst').boolValue,
     );
   }
   throw ShouldNeverBeHappenError();

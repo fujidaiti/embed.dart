@@ -11,65 +11,58 @@ class Preprocessing {
 
   Object? applyTo(Object? value) => _apply(_transformValue, value);
 
-  Object? _apply(Object? Function(Object? value) f, Object? value) {
-    return switch (value) {
-      Map values => f(values.map(_applyToKeyValue)),
-      List values => f(values.map(applyTo).toList(growable: false)),
-      Set values => f(values.map(applyTo).toSet()),
-      _ => f(value),
-    };
-  }
+  Object? _apply(Object? Function(Object? value) f, Object? value) =>
+      switch (value) {
+        final Map values => f(values.map(_applyToKeyValue)),
+        final List values => f(values.map(applyTo).toList(growable: false)),
+        final Set values => f(values.map(applyTo).toSet()),
+        _ => f(value),
+      };
 
   MapEntry _applyToKeyValue(Object? key, Object? value) =>
       MapEntry(_apply(_transformKey, key), _apply(_transformValue, value));
 
-  Object? _transformKey(Object? key) =>
-      _preprocessors.fold(key, (previousValue, preprocessor) {
-        return preprocessor.transformKey(previousValue);
-      });
+  Object? _transformKey(Object? key) => _preprocessors.fold(
+      key,
+      (previousValue, preprocessor) =>
+          preprocessor.transformKey(previousValue));
 
-  Object? _transformValue(Object? key) =>
-      _preprocessors.fold(key, (previousValue, preprocessor) {
-        return preprocessor.transformValue(previousValue);
-      });
+  Object? _transformValue(Object? key) => _preprocessors.fold(
+      key,
+      (previousValue, preprocessor) =>
+          preprocessor.transformValue(previousValue));
 }
 
 abstract class _PreprocessorImpl {
   const _PreprocessorImpl();
+
+  factory _PreprocessorImpl.from(Preprocessor value) => switch (value) {
+        Recase() => const _RecaseImpl(),
+        EscapeReservedKeywords() => const _EscapeReservedKeywordsImpl(),
+        final Replace r => _ReplaceImpl(r.pattern, r.replacement, r.onlyFirst),
+      };
   Object? transformKey(Object? key) => key;
   Object? transformValue(Object? value) => value;
-
-  factory _PreprocessorImpl.from(Preprocessor value) {
-    return switch (value) {
-      Recase() => const _RecaseImpl(),
-      EscapeReservedKeywords() => const _EscapeReservedKeywordsImpl(),
-      Replace r => _ReplaceImpl(r.pattern, r.replacement, r.onlyFirst),
-    };
-  }
 }
 
 class _RecaseImpl extends _PreprocessorImpl {
   const _RecaseImpl();
 
   @override
-  Object? transformKey(Object? key) {
-    return switch (key) {
-      String key => key.camelCase,
-      _ => key,
-    };
-  }
+  Object? transformKey(Object? key) => switch (key) {
+        final String key => key.camelCase,
+        _ => key,
+      };
 }
 
 class _EscapeReservedKeywordsImpl extends _PreprocessorImpl {
   const _EscapeReservedKeywordsImpl();
 
   @override
-  Object? transformKey(Object? key) {
-    return switch (key) {
-      String key when reservedDartKeywords.contains(key) => "\$$key",
-      _ => key,
-    };
-  }
+  Object? transformKey(Object? key) => switch (key) {
+        final String key when reservedDartKeywords.contains(key) => '\$$key',
+        _ => key,
+      };
 }
 
 class _ReplaceImpl extends _PreprocessorImpl {
@@ -89,11 +82,10 @@ class _ReplaceImpl extends _PreprocessorImpl {
   @override
   Object? transformKey(Object? key) => _transform(key);
 
-  Object? _transform(Object? value) {
-    return switch (value) {
-      String value when onlyFirst => value.replaceFirst(pattern, replacement),
-      String value => value.replaceAll(pattern, replacement),
-      _ => value,
-    };
-  }
+  Object? _transform(Object? value) => switch (value) {
+        final String value when onlyFirst =>
+          value.replaceFirst(pattern, replacement),
+        final String value => value.replaceAll(pattern, replacement),
+        _ => value,
+      };
 }

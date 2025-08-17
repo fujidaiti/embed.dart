@@ -19,14 +19,14 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
 
   String _cacheContent(String content, String extension) {
     final hash = Object.hash(content, extension);
-    final fakeContentPath = "$hash.$extension";
+    final fakeContentPath = '$hash.$extension';
     _cachedStringContents[fakeContentPath] = content;
     return fakeContentPath;
   }
 
   String _cacheBinaryContent(Uint8List content, String extension) {
     final hash = Object.hash(content, extension);
-    final fakeContentPath = "$hash.$extension";
+    final fakeContentPath = '$hash.$extension';
     _cachedBinaryContents[fakeContentPath] = content;
     return fakeContentPath;
   }
@@ -37,15 +37,15 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    final content = annotation.peek("content");
-    final extension = annotation.peek("extension");
+    final content = annotation.peek('content');
+    final extension = annotation.peek('extension');
     final fakeContentPath = switch ((content, extension)) {
-      (var content?, var extension?) => content.isString
+      (final content?, final extension?) => content.isString
           ? _cacheContent(content.stringValue, extension.stringValue)
           : _cacheBinaryContent(content.uin8tListValue, extension.stringValue),
-      _ => throw StateError(
-          "'${annotation.objectValue.type!.getDisplayString()}' "
-          "must implement '$TestAnnotation'"),
+      _ =>
+        throw StateError("'${annotation.objectValue.type!.getDisplayString()}' "
+            "must implement '$TestAnnotation'"),
     };
 
     final pathReader = MockConstantReader();
@@ -53,7 +53,7 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
 
     final annotationReader = MockConstantReader();
     when(annotationReader.instanceOf(any)).thenReturn(true);
-    when(annotationReader.read("path")).thenReturn(pathReader);
+    when(annotationReader.read('path')).thenReturn(pathReader);
 
     for (final field in additionalAnnotationFields) {
       when(annotationReader.read(field)).thenReturn(annotation.read(field));
@@ -67,7 +67,7 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
   }
 
   @override
-  File resolveContent(config, BuildStep buildStep) {
+  File resolveContent(E config, BuildStep buildStep) {
     final stringContent = _cachedStringContents[config.path];
     final binaryContent = _cachedBinaryContents[config.path];
 

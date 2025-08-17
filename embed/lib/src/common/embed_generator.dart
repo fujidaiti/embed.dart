@@ -15,18 +15,15 @@ abstract class EmbeddingGenerator<E extends Embed>
       Element2 element, ConstantReader annotation, BuildStep buildStep) async {
     if (element is! TopLevelVariableElement2) {
       throw InvalidGenerationSourceError(
-        "Only top level variables can be annotated with $E",
+        'Only top level variables can be annotated with $E',
         element: element,
       );
     }
 
     try {
       return await _run(element, annotation, buildStep);
-    } on Error catch (error, stackTrace) {
-      throw Error.throwWithStackTrace(
-        InvalidGenerationSourceError("$error", element: element),
-        stackTrace,
-      );
+    } on Exception catch (error) {
+      throw InvalidGenerationSourceError('$error', element: element);
     }
   }
 
@@ -37,9 +34,9 @@ abstract class EmbeddingGenerator<E extends Embed>
   ) async {
     final embedder = createEmbedderFrom(annotation);
     final content = resolveContent(embedder.config, buildStep);
-    final variable = "_\$${element.name3}";
+    final variable = '_\$${element.name3}';
     final embedding = await embedder.getEmbeddingOf(content, element);
-    return "const $variable = $embedding;";
+    return 'const $variable = $embedding;';
   }
 
   File resolveContent(E config, BuildStep buildStep) {

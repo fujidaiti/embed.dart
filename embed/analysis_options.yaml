@@ -1,1 +1,23 @@
-include: package:lints/recommended.yaml
+include: package:all_lint_rules_community/all.yaml
+linter:
+  rules:
+    always_put_control_body_on_new_line: false
+    specify_nonobvious_local_variable_types: false
+    always_specify_types: false
+    use_setters_to_change_properties: false
+    one_member_abstracts: false
+    avoid_redundant_argument_values: false
+    require_trailing_commas: false
+    prefer_int_literals: false
+    prefer_double_quotes: false
+    prefer_final_parameters: false
+    flutter_style_todos: false
+    cascade_invocations: false
+    join_return_with_assignment: false
+    prefer_relative_imports: false
+    unnecessary_parenthesis: false
+    avoid_positional_boolean_parameters: false
+    public_member_api_docs: false
+    prefer_asserts_with_message: false
+    unnecessary_final: false
+    sort_pub_dependencies: false

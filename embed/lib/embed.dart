@@ -5,13 +5,11 @@ import 'package:embed/src/str/str_embedding_generator.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Creates a builder for @Embed annotations.
-Builder embedBuilder(BuilderOptions options) {
-  return SharedPartBuilder(
-    [
-      StrEmbeddingGenerator(),
-      LiteralEmbeddingGenerator(),
-      BinaryEmbeddingGenerator(),
-    ],
-    "embed",
-  );
-}
+Builder embedBuilder(BuilderOptions options) => SharedPartBuilder(
+      [
+        StrEmbeddingGenerator(),
+        LiteralEmbeddingGenerator(),
+        BinaryEmbeddingGenerator(),
+      ],
+      'embed',
+    );

@@ -29,10 +29,10 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
     final stringContent = await content.readAsString();
     final fileExtension = p.extension(content.path);
     return switch (fileExtension) {
-      ".json" => jsonDecode(stringContent),
-      ".yaml" || ".yml" => loadYaml(stringContent),
-      ".toml" => TomlDocument.parse(stringContent).toMap(),
-      _ => UsageError("Invalid file extension: $EmbedLiteral "
+      '.json' => jsonDecode(stringContent),
+      '.yaml' || '.yml' => loadYaml(stringContent),
+      '.toml' => TomlDocument.parse(stringContent).toMap(),
+      _ => UsageError('Invalid file extension: $EmbedLiteral '
           "does not support '*$fileExtension'"),
     };
   }

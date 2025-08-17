@@ -20,11 +20,7 @@ class BinaryEmbedder extends Embedder<EmbedBinary> {
     return _encodeAsList(bytes);
   }
 
-  String _encodeAsList(Uint8List bytes) {
-    return '$bytes';
-  }
+  String _encodeAsList(Uint8List bytes) => '$bytes';
 
-  String _encodeBase64(Uint8List bytes) {
-    return "'${base64.encode(bytes)}'";
-  }
+  String _encodeBase64(Uint8List bytes) => "'${base64.encode(bytes)}'";
 }

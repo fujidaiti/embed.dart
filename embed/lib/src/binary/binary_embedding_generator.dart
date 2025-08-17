@@ -8,10 +8,10 @@ class BinaryEmbeddingGenerator extends EmbeddingGenerator<EmbedBinary> {
   @override
   Embedder<EmbedBinary> createEmbedderFrom(ConstantReader annotation) {
     assert(annotation.instanceOf(const TypeChecker.typeNamed(EmbedBinary,
-        inPackage: "embed_annotation")));
+        inPackage: 'embed_annotation')));
     return BinaryEmbedder(EmbedBinary(
-      annotation.read("path").stringValue,
-      base64: annotation.read("base64").boolValue,
+      annotation.read('path').stringValue,
+      base64: annotation.read('base64').boolValue,
     ));
   }
 }

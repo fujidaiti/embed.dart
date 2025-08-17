@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:build/build.dart' show BuildStep;
 import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
@@ -8,12 +9,13 @@ File resolveContent(String path, InputSourceFilePathProvider source) {
   final content = File(resolvedPath);
   return switch (content.existsSync()) {
     true => content,
-    false => throw UsageError("No such file exists: $path"),
+    false => throw UsageError('No such file exists: $path'),
   };
 }
 
 /// Signature of a callback that returns the path of the input source file
-/// associated with the current [BuildStep], relative to the package root directory.
+/// associated with the current [BuildStep], relative to the package root
+/// directory.
 typedef InputSourceFilePathProvider = String Function();
 
 /// Convert the given file [path] to an absolute path.

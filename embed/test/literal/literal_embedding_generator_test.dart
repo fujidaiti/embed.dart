@@ -7,8 +7,8 @@ import '../utils/test_generator_mixin.dart';
 
 Future<void> main() async {
   final libraryReader = await initializeLibraryReaderForDirectory(
-    "test/literal",
-    "literal_embedding_generator_test.dart",
+    'test/literal',
+    'literal_embedding_generator_test.dart',
   );
 
   initializeBuildLogTracking();
@@ -17,7 +17,7 @@ Future<void> main() async {
 
 class TestGenerator extends LiteralEmbeddingGenerator with TestGeneratorMixin {
   @override
-  List<String> get additionalAnnotationFields => const ["preprocessors"];
+  List<String> get additionalAnnotationFields => const ['preprocessors'];
 }
 
 class TestEmbedLiteral extends ShouldGenerate
@@ -50,34 +50,34 @@ class TestEmbedLiteral extends ShouldGenerate
 /* -------------------------------------------------------------------------- */
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": 0 }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$integerLiterals = (a: 0);
-""",
+''',
 )
 dynamic integerLiterals;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": "0xffffffff" }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$hexDecimalIntegerLiteral = {"a": 0xffffffff};
-""",
+''',
 )
 Map<String, int>? hexDecimalIntegerLiteral;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": 0.0, "b": -0.0 }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$floatLiterals = (a: 0.0, b: -0.0);
-""",
+''',
 )
 dynamic floatLiterals;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: r"""
 { "a": "a", "b": "\"b\"", "c": "'c'" }
 """,
@@ -88,55 +88,55 @@ const _$stringLiterals = (a: "a", b: "\"b\"", c: "'c'");
 dynamic stringLiterals;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": true, "b": false }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$booleanLiterals = (a: true, b: false);
-""",
+''',
 )
 dynamic booleanLiterals;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": null }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$nullLiteral = (a: null);
-""",
+''',
 )
 dynamic nullLiteral;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '[0, 1, 2, 3, 4, 5]',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$arrayLiteral = [0, 1, 2, 3, 4, 5];
-""",
+''',
 )
 dynamic arrayLiteral;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": 0, "b": 0.0, "c": true }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$recordLiteral = (a: 0, b: 0.0, c: true);
-""",
+''',
 )
 dynamic recordLiteral;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "#": 0 }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$mapLiteral = {"#": 0};
-""",
+''',
 )
 dynamic mapLiteral;
 
 // Any of the reserved Dart keywords should be prefixed with a '$' sign
 // when it is used as a record field name.
 @TestEmbedLiteral(
-  extension: "json",
-  content: r"""
+  extension: 'json',
+  content: '''
 {
   "assert": null,
   "break": null,
@@ -173,8 +173,8 @@ dynamic mapLiteral;
   "while": null,
   "with": null
 }
-""",
-  shouldGenerate: r"""
+''',
+  shouldGenerate: r'''
 const _$reservedWordsAsRecordField = (
   $assert: null,
   $break: null,
@@ -211,44 +211,44 @@ const _$reservedWordsAsRecordField = (
   $while: null,
   $with: null,
 );
-""",
+''',
 )
 dynamic reservedWordsAsRecordField;
 
 @TestEmbedLiteral(
-  extension: "json",
-  content: "[0, 1, 2, 3, 4, 5]",
-  shouldGenerate: r"""
+  extension: 'json',
+  content: '[0, 1, 2, 3, 4, 5]',
+  shouldGenerate: r'''
 const _$setPattern = {0, 1, 2, 3, 4, 5};
-""",
+''',
 )
 Set? setPattern;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": 0, "b": 0.0, "c": true }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$recordPattern = (a: 0, b: 0.0);
-""",
+''',
 )
 ({int a, double b})? recordPattern;
 
 @TestEmbedLiteral(
-  extension: "json",
+  extension: 'json',
   content: '{ "a": 0, "b": 0.0, "c": true }',
-  shouldGenerate: r"""
+  shouldGenerate: r'''
 const _$mapPattern = {"a": 0, "b": 0.0, "c": true};
-""",
+''',
 )
 Map<String, dynamic>? mapPattern;
 
 @TestEmbedLiteral(
-  extension: "json",
-  content: r"""
+  extension: 'json',
+  content: r'''
 { "dollar": "$" }
-""",
-  shouldGenerate: r"""
+''',
+  shouldGenerate: r'''
 const _$stringLiteralsDollar = (dollar: "\$");
-""",
+''',
 )
 dynamic stringLiteralsDollar;
