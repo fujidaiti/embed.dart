@@ -1,9 +1,13 @@
+// Ignore deprecated_member_use in order to support a wider range of build and
+// source_gen
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:analyzer/dart/element/element2.dart';
-import 'package:build/src/builder/build_step.dart';
+import 'package:build/build.dart';
 import 'package:embed/src/common/embed_generator.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:mockito/mockito.dart';
