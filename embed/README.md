@@ -442,6 +442,7 @@ Thanks to all the contributors!
   - Fix typos. ([#28](https://github.com/fujidaiti/embed.dart/pull/28))
   - Loosen analyzer version constraint. ([#32](https://github.com/fujidaiti/embed.dart/pull/32))
   - Replace deprecated TypeChecker.fromRuntime with TypeChecker.typeNamed. ([#33](https://github.com/fujidaiti/embed.dart/pull/33))
+  - Allow build `>=3.0.0 <5.0.0` and source_gen `>=3.1.0 <5.0.0` ([#36](https://github.com/fujidaiti/embed.dart/pull/36))
 
 <br/>
 

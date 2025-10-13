@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.2.3-wip
+## 1.2.3
 
 - Require Dart SDK version 3.6.0 or higher ([#37](https://github.com/fujidaiti/embed.dart/pull/37))
 

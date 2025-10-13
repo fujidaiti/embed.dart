@@ -1,8 +1,9 @@
 # CHANGELOG
 
-## 1.6.1-wip
+## 1.6.1
 
 - Require Dart SDK version 3.6.0 or higher ([#37](https://github.com/fujidaiti/embed.dart/pull/37))
+- Allow build `>=3.0.0 <5.0.0` and source_gen `>=3.1.0 <5.0.0` ([#36](https://github.com/fujidaiti/embed.dart/pull/36) by @FrankenApps)
 
 ## 1.6.0
 
