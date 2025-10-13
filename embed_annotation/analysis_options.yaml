@@ -1,4 +1,4 @@
-include: package:all_lint_rules_community/all.yaml
+include: ../all_lint_rules.yaml
 analyzer:
   errors:
     # Otherwise cause the import of all.yaml to warn because of some rules conflicts.

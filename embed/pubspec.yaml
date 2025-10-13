@@ -21,8 +21,6 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.4.15
-  lints: ^6.0.0
   mockito: ^5.4.5
   source_gen_test: ^1.1.1
   test: ^1.25.15
-  all_lint_rules_community: ^0.0.3
