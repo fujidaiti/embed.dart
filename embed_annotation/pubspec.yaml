@@ -4,8 +4,5 @@ version: 1.2.2
 repository: https://github.com/fujidaiti/embed.dart.git
 
 environment:
-  sdk: ">=3.0.5 <4.0.0"
-
-dev_dependencies:
-  lints: ^6.0.0
-  all_lint_rules_community: ^0.0.3
+  sdk: ">=3.6.0 <4.0.0"
+resolution: workspace

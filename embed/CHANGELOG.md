@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.1-wip
+
+- Require Dart SDK version 3.6.0 or higher ([#37](https://github.com/fujidaiti/embed.dart/pull/37))
+
 ## 1.6.0
 
 - Allow analyzer `>=7.4.0 <9.0.0`. ([#32](https://github.com/fujidaiti/embed.dart/pull/32) by @FrankenApps)
