@@ -1,3 +1,7 @@
+// Ignore deprecated_member_use in order to support a wider range of build and
+// source_gen
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
