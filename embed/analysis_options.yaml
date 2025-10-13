@@ -1,4 +1,9 @@
 include: package:all_lint_rules_community/all.yaml
+analyzer:
+  errors:
+    # Otherwise cause the import of all.yaml to warn because of some rules conflicts.
+    # We explicitly enabled even conflicting rules and are fixing the conflict in this file.
+    included_file_warning: ignore
 linter:
   rules:
     always_put_control_body_on_new_line: false
