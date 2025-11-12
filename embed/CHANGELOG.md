@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.2
+
+- Support `toml` 0.17.x ([#38](https://github.com/fujidaiti/embed.dart/pull/38) by @FrankenApps)
+
 ## 1.6.1
 
 - Require Dart SDK version 3.6.0 or higher ([#37](https://github.com/fujidaiti/embed.dart/pull/37))
