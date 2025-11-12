@@ -21,13 +21,13 @@ jobs:
         run: |
           dart pub get
           dart run build_runner build
-          dart analyze
+          dart analyze --fatal-warnings
 
       - name: Validate embed_annotation package
         working-directory: ./embed_annotation
         run: |
           dart pub get
-          dart analyze
+          dart analyze --fatal-warnings
 
       - name: Validate embed package
         working-directory: ./embed
@@ -35,4 +35,4 @@ jobs:
           dart pub get
           dart run build_runner build
           dart test
-          dart analyze
+          dart analyze --fatal-warnings
