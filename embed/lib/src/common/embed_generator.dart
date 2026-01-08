@@ -1,11 +1,10 @@
 // Ignore deprecated_member_use in order to support a wider range of build and
 // source_gen
-// ignore_for_file: deprecated_member_use
 
 import 'dart:async';
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed/src/common/resolve_content.dart' as r;
@@ -16,8 +15,8 @@ abstract class EmbeddingGenerator<E extends Embed>
     extends GeneratorForAnnotation<E> {
   @override
   FutureOr<String> generateForAnnotatedElement(
-      Element2 element, ConstantReader annotation, BuildStep buildStep) async {
-    if (element is! TopLevelVariableElement2) {
+      Element element, ConstantReader annotation, BuildStep buildStep) async {
+    if (element is! TopLevelVariableElement) {
       throw InvalidGenerationSourceError(
         'Only top level variables can be annotated with $E',
         element: element,
@@ -32,13 +31,13 @@ abstract class EmbeddingGenerator<E extends Embed>
   }
 
   Future<String> _run(
-    TopLevelVariableElement2 element,
+    TopLevelVariableElement element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
     final embedder = createEmbedderFrom(annotation);
     final content = resolveContent(embedder.config, buildStep);
-    final variable = '_\$${element.name3}';
+    final variable = '_\$${element.name}';
     final embedding = await embedder.getEmbeddingOf(content, element);
     return 'const $variable = $embedding;';
   }

@@ -1,12 +1,11 @@
 // Ignore deprecated_member_use in order to support a wider range of build and
 // source_gen
-// ignore_for_file: deprecated_member_use
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/pattern_matching.dart';
@@ -22,7 +21,7 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
 
   @override
   FutureOr<String> getEmbeddingOf(
-      File content, TopLevelVariableElement2 element) async {
+      File content, TopLevelVariableElement element) async {
     final value = await _parse(content);
     final expectedType = TypeConstraint.from(element.type);
     final preprocessed = Preprocessing(config.preprocessors).applyTo(value);

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.3
+
+- Support analyzer v9 ([#42](https://github.com/fujidaiti/embed.dart/pull/42))
+
 ## 1.6.2
 
 - Support `toml` 0.17.x ([#38](https://github.com/fujidaiti/embed.dart/pull/38) by @FrankenApps)
