@@ -2,7 +2,7 @@
 
 ## 1.6.3
 
-- Support analyzer v9 ([#42](https://github.com/fujidaiti/embed.dart/pull/42) by @FrankenApps)
+- Support analyzer v9 ([#42](https://github.com/fujidaiti/embed.dart/pull/42))
 
 ## 1.6.2
 
