@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/embed"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    groups:
+      dependencies:
+        dependency-type: "production"
+      dev-dependencies:
+        dependency-type: "development"
+
+  - package-ecosystem: "pub"
+    directory: "/embed_annotation"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    groups:
+      dependencies:
+        dependency-type: "production"
+      dev-dependencies:
+        dependency-type: "development"
