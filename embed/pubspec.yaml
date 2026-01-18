@@ -1,6 +1,6 @@
 name: embed
 description: Code generation for embedding arbitrary file content into Dart code.
-version: 1.6.3
+version: 1.6.4
 repository: https://github.com/fujidaiti/embed.dart.git
 
 environment:
