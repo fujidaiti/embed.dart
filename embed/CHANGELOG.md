@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.5
+
+- Support analyzer v12
+
 ## 1.6.4
 
 - Support analyzer v10 ([#46](https://github.com/fujidaiti/embed.dart/pull/46))
