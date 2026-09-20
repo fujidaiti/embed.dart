@@ -446,6 +446,8 @@ targets:
       - $package$
 ```
 
+See [How can I include additional sources in my build?](https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build) in the `build_config` documentation for more details. The [example package](https://github.com/fujidaiti/embed.dart/blob/master/example/build.yaml) uses this configuration.
+
 <br/>
 
 ## Roadmap
