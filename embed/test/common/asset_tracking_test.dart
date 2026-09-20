@@ -75,8 +75,7 @@ const embedded = _$embedded;
 ''',
       },
       outputs: {
-        'a|lib/example.embed.g.part':
-            decodedMatches(contains('name: embed')),
+        'a|lib/example.embed.g.part': decodedMatches(contains('name: embed')),
       },
       onLog: (_) {},
     );

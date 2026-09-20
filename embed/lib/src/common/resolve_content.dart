@@ -5,11 +5,17 @@ import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
+/// Documentation on how to declare additional sources in `build.yaml`.
+const _additionalSourcesUrl =
+    'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build';
+
 /// Resolve the file at [path] into an [EmbeddedContent].
 ///
 /// The file is read through [buildStep] whenever `build_runner` is able to
 /// read it as an asset, so that it is registered as an input of the current
-/// build step. Otherwise, the file is read directly with `dart:io`.
+/// build step. Otherwise, the file is read directly with `dart:io` and a
+/// warning is logged, because `build_runner` cannot detect changes to a file
+/// that it does not read as an asset.
 Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
   final resolvedPath = resolvePath(path, () => buildStep.inputId.path);
 
@@ -19,10 +25,31 @@ Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
   }
 
   final content = File(resolvedPath);
-  return switch (content.existsSync()) {
-    true => EmbeddedContent.file(content),
-    false => throw UsageError('No such file exists: $path'),
-  };
+  if (!content.existsSync()) {
+    throw UsageError('No such file exists: $path');
+  }
+
+  if (assetId == null) {
+    log.warning(
+      "'$path' is outside the package root directory, so build_runner "
+      'cannot track it. The generated code will not be updated when the '
+      'content of the file changes.',
+    );
+  } else {
+    final sourceGlob = switch (p.dirname(assetId.path)) {
+      '.' => assetId.path,
+      final directory => '$directory/**',
+    };
+    log.warning(
+      "'$path' is not included in the sources of the build target, so "
+      'build_runner cannot track it. The generated code will not be '
+      'updated when the content of the file changes. To fix this, add '
+      "'$sourceGlob' to the sources of the \$default target in build.yaml. "
+      'See $_additionalSourcesUrl for details.',
+    );
+  }
+
+  return EmbeddedContent.file(content);
 }
 
 /// Convert [absolutePath] into an [AssetId] of [package].
