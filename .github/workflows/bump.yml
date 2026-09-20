@@ -80,35 +80,14 @@ jobs:
           app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
           private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
 
-      - name: Check for an open release pull request
-        if: steps.commits.outputs.proceed == 'true'
-        id: open-pr
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          TAG_PREFIX: ${{ matrix.tag_prefix }}
-        run: |
-          set -euo pipefail
-
-          # Do not open a second pull request for this package while a previous
-          # one is still waiting to be merged.
-          EXISTING="$(gh pr list --state open --base master --json headRefName \
-            --jq "[.[] | select(.headRefName | startswith(\"release/${TAG_PREFIX}-v\"))] | .[0].headRefName // empty")"
-          if [ -n "$EXISTING" ]; then
-            echo "Pull request for ${EXISTING} is already open. Skipping."
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "proceed=true" >> "$GITHUB_OUTPUT"
-
       - name: Setup Dart SDK
-        if: steps.open-pr.outputs.proceed == 'true'
+        if: steps.commits.outputs.proceed == 'true'
         uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
       - name: Bump the patch version
-        if: steps.open-pr.outputs.proceed == 'true'
+        if: steps.commits.outputs.proceed == 'true'
         id: bump
         env:
           PKG: ${{ matrix.package }}
@@ -120,11 +99,16 @@ jobs:
           NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
           echo "New version of ${PKG}: ${NEW_VERSION}"
 
+          # The timestamp suffix keeps every run on its own branch, so a run never
+          # collides with the branch of an earlier release pull request.
+          BRANCH="release/${TAG_PREFIX}-v${NEW_VERSION}-$(date -u +%Y%m%d%H%M%S)"
+          echo "Branch: ${BRANCH}"
+
           echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "branch=release/${TAG_PREFIX}-v${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Update the changelog
-        if: steps.open-pr.outputs.proceed == 'true'
+        if: steps.commits.outputs.proceed == 'true'
         env:
           PKG: ${{ matrix.package }}
           NEW_VERSION: ${{ steps.bump.outputs.new_version }}
@@ -143,14 +127,14 @@ jobs:
           mv "$RUNNER_TEMP/changelog.md" "${PKG}/CHANGELOG.md"
 
       - name: Get bot user id
-        if: steps.open-pr.outputs.proceed == 'true'
+        if: steps.commits.outputs.proceed == 'true'
         id: bot-user-id
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
 
       - name: Create pull request
-        if: steps.open-pr.outputs.proceed == 'true'
+        if: steps.commits.outputs.proceed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PKG: ${{ matrix.package }}
