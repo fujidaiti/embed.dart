@@ -62,6 +62,7 @@ int main(void) {
     - [How to restrict the structure of data to be embedded?](#how-to-restrict-the-structure-of-data-to-be-embedded)
 - [Troubleshooting Guide](#troubleshooting-guide)
   - [I edited my json file to embed, but the generated code doesn't update even when I run build\_runner again](#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again)
+  - [Which files can be tracked?](#which-files-can-be-tracked)
 - [Roadmap](#roadmap)
 - [Contributors](#contributors)
 - [Contributing](#contributing)
@@ -407,9 +408,9 @@ const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none", "version": ... 
 
 ### I edited my json file to embed, but the generated code doesn't update even when I run build_runner again
 
-It seems that the `build_runner` caches the previous output and if a source file has not changed from the previous one, it will not regenerate the code for that file. Since the source file does not change before and after modifinyg the json file, the updates are not reflected.
+*embed* reads the file to be embedded through the `build_runner` API, which registers it as an input of the code generation. `build_runner` then regenerates the Dart code whenever the file content changes, in both `build` and `watch` mode. No manual step is required.
 
-To avoid this problem, try removing the cache before running the `build_runner` as follows (replace `flutter` with `dart` if you are working in a Dart project):
+If the generated code is still not updated, the file is probably not tracked by `build_runner`. See [Which files can be tracked?](#which-files-can-be-tracked) for the conditions and how to fix it. As a last resort, remove the cache before running the `build_runner` as follows (replace `flutter` with `dart` if you are working in a Dart project):
 
 ```shell
 flutter pub run build_runner clean && flutter pub run build_runner build
@@ -419,6 +420,30 @@ If you are still having the problem, also try this:
 
 ```shell
 flutter clean && flutter pub run build_runner build
+```
+
+<br/>
+
+### Which files can be tracked?
+
+`build_runner` can only track a file that is part of its source set. A file is tracked if both of the following are true:
+
+1. The file is inside the package root directory. A file outside of it, such as `../../shared/config.json`, cannot be tracked.
+2. The file matches one of the source globs of the build target. By default these are `assets/**`, `benchmark/**`, `bin/**`, `example/**`, `lib/**`, `test/**`, `integration_test/**`, `tool/**`, `web/**`, `node/**`, `pubspec.yaml`, and a few others.
+
+Files that do not meet these conditions are still embedded correctly, but the generated code is not updated when their content changes.
+
+If your files are in a directory that is not covered by the default globs, add it to the `sources` of the default build target in `build.yaml`. Please note that specifying `sources` replaces the default list instead of extending it, so the directories you rely on must all be listed:
+
+```yaml
+# build.yaml
+targets:
+  $default:
+    sources:
+      - data/**   # The directory containing the files to be embedded.
+      - lib/**
+      - pubspec.yaml
+      - $package$
 ```
 
 <br/>
