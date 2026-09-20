@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.7
+
+- Support analyzer v14
+
 ## 1.6.6
 
 - Support analyzer v13
