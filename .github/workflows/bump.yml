@@ -1,0 +1,193 @@
+# Opens a release pull request for each package that has unreleased commits.
+#
+# For every package, the workflow looks up the latest `<prefix>-v*` tag, lists the
+# commits that touched the package directory since that tag, bumps the version in
+# pubspec.yaml and prepends a new section to CHANGELOG.md listing those commits.
+#
+# Merging the resulting pull request triggers release.yml.
+name: Prepare Release PR
+
+on:
+  # 21:00 UTC on Sunday is 06:00 JST on Monday. The plan job below reduces this
+  # weekly trigger to a biweekly one.
+  schedule:
+    - cron: '0 21 * * 0'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to prepare a release pull request for
+        type: choice
+        default: all
+        options: [all, embed, embed_annotation]
+      bump_type:
+        description: Which part of the version number to increment
+        type: choice
+        default: patch
+        options: [patch, minor, major]
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      # A JSON array of matrix entries, or "[]" when this run should do nothing.
+      packages: ${{ steps.plan.outputs.packages }}
+    steps:
+      - name: Decide which packages to process
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_PACKAGE: ${{ inputs.package }}
+        run: |
+          set -euo pipefail
+
+          EMBED='{"package":"embed","tag_prefix":"embed"}'
+          ANNOTATION='{"package":"embed_annotation","tag_prefix":"anno"}'
+
+          # The cron fires weekly, but releases are prepared biweekly. 20716 is the
+          # UTC day number of 2026-09-20, the date of the first intended firing, so
+          # every other firing lands on a multiple of 14 days after it.
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DAY=$(( $(date -u +%s) / 86400 ))
+            if [ $(( (DAY - 20716) % 14 )) -ne 0 ]; then
+              echo "Off-week firing. Nothing to do."
+              echo "packages=[]" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          case "${INPUT_PACKAGE:-all}" in
+            embed)            PACKAGES="[$EMBED]" ;;
+            embed_annotation) PACKAGES="[$ANNOTATION]" ;;
+            *)                PACKAGES="[$EMBED,$ANNOTATION]" ;;
+          esac
+
+          echo "Packages: $PACKAGES"
+          echo "packages=$PACKAGES" >> "$GITHUB_OUTPUT"
+
+  bump:
+    runs-on: ubuntu-latest
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          # The full history and all tags are needed to find the latest release
+          # tag and to list the commits made since then.
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Bump version and update changelog
+        id: prepare
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PKG: ${{ matrix.package }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
+          BUMP_TYPE: ${{ inputs.bump_type || 'patch' }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          LATEST_TAG="$(git tag --list "${TAG_PREFIX}-v*" --sort=-v:refname | head -n1)"
+          if [ -z "$LATEST_TAG" ]; then
+            echo "::error::No ${TAG_PREFIX}-v* tag exists. Create the initial tag before running this workflow."
+            exit 1
+          fi
+          echo "Latest tag for ${PKG}: ${LATEST_TAG}"
+
+          # Only commits that touched the package directory count as unreleased
+          # changes. The tag itself points at the previous bump commit, so that
+          # commit is excluded by the range.
+          COMMITS="$(git log --format='%s' "${LATEST_TAG}..HEAD" -- "${PKG}/")"
+          if [ -z "$COMMITS" ]; then
+            echo "No unreleased commits for ${PKG}. Skipping."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Squash-merged commit subjects end with "(#123)". Turn that suffix into
+          # a link to the pull request; subjects without it are listed as is.
+          echo "$COMMITS" | sed -E \
+            -e 's|^|- |' \
+            -e "s| \(#([0-9]+)\)\$| ([#\1](${REPO_URL}/pull/\1))|" \
+            > "$RUNNER_TEMP/notes.md"
+          echo "Release notes:"
+          cat "$RUNNER_TEMP/notes.md"
+
+          (cd "$PKG" && dart pub bump "$BUMP_TYPE")
+          NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
+          BRANCH="release/${TAG_PREFIX}-v${NEW_VERSION}"
+
+          # Do not open a second pull request while a previous one is still open.
+          if [ -n "$(gh pr list --state open --head "$BRANCH" --json number --jq '.[].number')" ]; then
+            echo "Pull request for ${BRANCH} is already open. Skipping."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Prepend the new section, keeping the existing "# CHANGELOG" header.
+          {
+            echo "# CHANGELOG"
+            echo
+            echo "## ${NEW_VERSION}"
+            echo
+            cat "$RUNNER_TEMP/notes.md"
+            tail -n +2 "${PKG}/CHANGELOG.md"
+          } > "$RUNNER_TEMP/changelog.md"
+          mv "$RUNNER_TEMP/changelog.md" "${PKG}/CHANGELOG.md"
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Get bot user id
+        if: steps.prepare.outputs.has_changes == 'true'
+        id: bot-user-id
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
+      - name: Create pull request
+        if: steps.prepare.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PKG: ${{ matrix.package }}
+          NEW_VERSION: ${{ steps.prepare.outputs.new_version }}
+          BRANCH: ${{ steps.prepare.outputs.branch }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+          BOT_USER_ID: ${{ steps.bot-user-id.outputs.user-id }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add "${PKG}/pubspec.yaml" "${PKG}/CHANGELOG.md"
+          git commit -m "Bump ${PKG} to ${NEW_VERSION}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "Bump ${PKG} to ${NEW_VERSION}" \
+            --body-file "$RUNNER_TEMP/notes.md" \
+            --reviewer "${{ github.repository_owner }}"
