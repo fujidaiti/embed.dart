@@ -1,8 +1,9 @@
 # Opens a release pull request for each package that has unreleased commits.
 #
-# For every package, the workflow looks up the latest `<prefix>-v*` tag, lists the
-# commits that touched the package directory since that tag, bumps the version in
-# pubspec.yaml and prepends a new section to CHANGELOG.md listing those commits.
+# The `plan` job selects the packages whose directory received commits after
+# their latest `<prefix>-v*` tag. The `bump` job then runs once per selected
+# package: it bumps the version in pubspec.yaml and prepends a new section to
+# CHANGELOG.md listing those commits.
 #
 # Merging the resulting pull request triggers release.yml.
 name: Prepare Release PR
@@ -14,16 +15,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  bump:
+  plan:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - package: embed
-            tag_prefix: embed
-          - package: embed_annotation
-            tag_prefix: anno
+    outputs:
+      # A JSON array of matrix entries, one per package that has unreleased
+      # commits, or "[]" when there is nothing to release.
+      packages: ${{ steps.plan.outputs.packages }}
 
     steps:
       - name: Checkout repository
@@ -35,37 +32,70 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: List unreleased commits
-        id: commits
-        env:
-          PKG: ${{ matrix.package }}
-          TAG_PREFIX: ${{ matrix.tag_prefix }}
+      - name: Select packages with unreleased commits
+        id: plan
         run: |
           set -euo pipefail
 
-          LATEST_TAG="$(git tag --list "${TAG_PREFIX}-v*" --sort=-v:refname | head -n1)"
-          if [ -z "$LATEST_TAG" ]; then
-            echo "::error::No ${TAG_PREFIX}-v* tag exists. Create the initial tag before running this workflow."
-            exit 1
-          fi
-          echo "Latest tag for ${PKG}: ${LATEST_TAG}"
+          PACKAGES='[]'
+          for ENTRY in 'embed:embed' 'embed_annotation:anno'; do
+            PKG="${ENTRY%%:*}"
+            TAG_PREFIX="${ENTRY##*:}"
 
-          # Only commits that touched the package directory count as unreleased
-          # changes. The tag itself points at the previous bump commit, so that
-          # commit is excluded by the range.
+            LATEST_TAG="$(git tag --list "${TAG_PREFIX}-v*" --sort=-v:refname | head -n1)"
+            if [ -z "$LATEST_TAG" ]; then
+              echo "::error::No ${TAG_PREFIX}-v* tag exists. Create the initial tag before running this workflow."
+              exit 1
+            fi
+
+            # Only commits that touched the package directory count as unreleased
+            # changes. The tag itself points at the previous bump commit, so that
+            # commit is excluded by the range.
+            if [ -z "$(git log --format='%s' "${LATEST_TAG}..HEAD" -- "${PKG}/")" ]; then
+              echo "${PKG}: no commits since ${LATEST_TAG}. Skipping."
+              continue
+            fi
+
+            echo "${PKG}: has commits since ${LATEST_TAG}."
+            PACKAGES="$(echo "$PACKAGES" | jq -c \
+              --arg package "$PKG" \
+              --arg tag_prefix "$TAG_PREFIX" \
+              --arg latest_tag "$LATEST_TAG" \
+              '. + [{ package: $package, tag_prefix: $tag_prefix, latest_tag: $latest_tag }]')"
+          done
+
+          echo "Packages: ${PACKAGES}"
+          echo "packages=${PACKAGES}" >> "$GITHUB_OUTPUT"
+
+  bump:
+    runs-on: ubuntu-latest
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Collect release notes
+        env:
+          PKG: ${{ matrix.package }}
+          LATEST_TAG: ${{ matrix.latest_tag }}
+        run: |
+          set -euo pipefail
+
           git log --format='- %s' "${LATEST_TAG}..HEAD" -- "${PKG}/" > "$RUNNER_TEMP/notes.md"
-          if [ ! -s "$RUNNER_TEMP/notes.md" ]; then
-            echo "No unreleased commits for ${PKG}. Skipping."
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
           echo "Release notes:"
           cat "$RUNNER_TEMP/notes.md"
 
-          echo "proceed=true" >> "$GITHUB_OUTPUT"
-
       - name: Generate GitHub App token
-        if: steps.commits.outputs.proceed == 'true'
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
@@ -73,13 +103,11 @@ jobs:
           private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
 
       - name: Setup Dart SDK
-        if: steps.commits.outputs.proceed == 'true'
         uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
       - name: Bump the patch version
-        if: steps.commits.outputs.proceed == 'true'
         id: bump
         env:
           PKG: ${{ matrix.package }}
@@ -100,7 +128,6 @@ jobs:
           echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Update the changelog
-        if: steps.commits.outputs.proceed == 'true'
         env:
           PKG: ${{ matrix.package }}
           NEW_VERSION: ${{ steps.bump.outputs.new_version }}
@@ -119,14 +146,12 @@ jobs:
           mv "$RUNNER_TEMP/changelog.md" "${PKG}/CHANGELOG.md"
 
       - name: Get bot user id
-        if: steps.commits.outputs.proceed == 'true'
         id: bot-user-id
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
 
       - name: Create pull request
-        if: steps.commits.outputs.proceed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PKG: ${{ matrix.package }}
