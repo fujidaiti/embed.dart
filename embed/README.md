@@ -408,7 +408,7 @@ const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none", "version": ... 
 
 ### I edited my json file to embed, but the generated code doesn't update even when I run build_runner again
 
-*embed* reads the file to be embedded through the `build_runner` API, which registers it as an input of the code generation. `build_runner` then regenerates the Dart code whenever the file content changes, in both `build` and `watch` mode. No manual step is required.
+From v1.7.0, *embed* reads the file to be embedded through the `build_runner` API, which registers it as an input of the code generation. `build_runner` then regenerates the Dart code whenever the file content changes, in both `build` and `watch` mode. No manual step is required.
 
 If the generated code is still not updated, the file is probably not tracked by `build_runner`. See [Which files can be tracked?](#which-files-can-be-tracked) for the conditions and how to fix it. As a last resort, remove the cache before running the `build_runner` as follows (replace `flutter` with `dart` if you are working in a Dart project):
 

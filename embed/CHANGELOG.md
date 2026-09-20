@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.7.0
+
+- Regenerate the code when the content of an embedded file changes ([#53](https://github.com/fujidaiti/embed.dart/pull/53))
+
 ## 1.6.7
 
 - Support analyzer v14
