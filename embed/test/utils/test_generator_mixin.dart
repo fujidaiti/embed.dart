@@ -2,18 +2,17 @@
 // source_gen
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:embed/src/common/embed_generator.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 import 'package:mockito/mockito.dart';
 import 'package:source_gen/src/constants/reader.dart';
 
 import 'mock_constant_reader.dart';
-import 'mock_file.dart';
 import 'test_annotation.dart';
 
 mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
@@ -70,20 +69,40 @@ mixin TestGeneratorMixin<E extends Embed> on EmbeddingGenerator<E> {
   }
 
   @override
-  File resolveContent(E config, BuildStep buildStep) {
+  Future<EmbeddedContent> resolveContent(E config, BuildStep buildStep) async {
     final stringContent = _cachedStringContents[config.path];
     final binaryContent = _cachedBinaryContents[config.path];
 
     assert(stringContent != null || binaryContent != null);
 
-    final contentFile = MockFile();
-    when(contentFile.path).thenReturn(config.path);
-    when(contentFile.readAsString()).thenAnswer((_) async => stringContent!);
-    when(contentFile.readAsBytes()).thenAnswer((_) async => binaryContent!);
-    return contentFile;
+    return _FakeEmbeddedContent(
+      path: config.path,
+      stringContent: stringContent,
+      binaryContent: binaryContent,
+    );
   }
 
   List<String> get additionalAnnotationFields;
+}
+
+class _FakeEmbeddedContent extends EmbeddedContent {
+  const _FakeEmbeddedContent({
+    required this.path,
+    required this.stringContent,
+    required this.binaryContent,
+  });
+
+  @override
+  final String path;
+
+  final String? stringContent;
+  final Uint8List? binaryContent;
+
+  @override
+  Future<String> readAsString() async => stringContent!;
+
+  @override
+  Future<Uint8List> readAsBytes() async => binaryContent!;
 }
 
 extension _ConstantReaderUintListExtension on ConstantReader {

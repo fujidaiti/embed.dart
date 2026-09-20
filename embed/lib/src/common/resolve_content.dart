@@ -1,16 +1,43 @@
 import 'dart:io';
 
-import 'package:build/build.dart' show BuildStep;
+import 'package:build/build.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
-File resolveContent(String path, InputSourceFilePathProvider source) {
-  final resolvedPath = resolvePath(path, source);
+/// Resolve the file at [path] into an [EmbeddedContent].
+///
+/// The file is read through [buildStep] whenever `build_runner` is able to
+/// read it as an asset, so that it is registered as an input of the current
+/// build step. Otherwise, the file is read directly with `dart:io`.
+Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
+  final resolvedPath = resolvePath(path, () => buildStep.inputId.path);
+
+  final assetId = resolveAssetId(resolvedPath, buildStep.inputId.package);
+  if (assetId != null && await buildStep.canRead(assetId)) {
+    return EmbeddedContent.asset(assetId, buildStep);
+  }
+
   final content = File(resolvedPath);
   return switch (content.existsSync()) {
-    true => content,
+    true => EmbeddedContent.file(content),
     false => throw UsageError('No such file exists: $path'),
   };
+}
+
+/// Convert [absolutePath] into an [AssetId] of [package].
+///
+/// Returns `null` if the file is outside the package root directory, since
+/// such a file cannot be represented as an [AssetId].
+///
+/// This function assumes that `build_runner` is run in the package root.
+AssetId? resolveAssetId(String absolutePath, String package) {
+  final relativePath = p.relative(absolutePath, from: p.current);
+  if (p.isAbsolute(relativePath) || p.split(relativePath).first == '..') {
+    return null;
+  }
+  // AssetId paths always use POSIX separators.
+  return AssetId(package, p.url.joinAll(p.split(relativePath)));
 }
 
 /// Signature of a callback that returns the path of the input source file

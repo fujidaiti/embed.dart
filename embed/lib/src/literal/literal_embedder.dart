@@ -3,9 +3,9 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:embed/src/literal/pattern_matching.dart';
@@ -21,14 +21,14 @@ class LiteralEmbedder extends Embedder<EmbedLiteral> {
 
   @override
   FutureOr<String> getEmbeddingOf(
-      File content, TopLevelVariableElement element) async {
+      EmbeddedContent content, TopLevelVariableElement element) async {
     final value = await _parse(content);
     final expectedType = TypeConstraint.from(element.type);
     final preprocessed = Preprocessing(config.preprocessors).applyTo(value);
     return match(preprocessed, expectedType).toString();
   }
 
-  Future<dynamic> _parse(File content) async {
+  Future<dynamic> _parse(EmbeddedContent content) async {
     final stringContent = await content.readAsString();
     final fileExtension = p.extension(content.path);
     return switch (fileExtension) {
