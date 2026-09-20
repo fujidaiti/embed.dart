@@ -8,8 +8,7 @@
 name: Prepare Release PR
 
 on:
-  # 21:00 UTC on Sunday is 06:00 JST on Monday. The plan job below reduces this
-  # weekly trigger to a biweekly one.
+  # 21:00 UTC on Sunday is 06:00 JST on Monday.
   schedule:
     - cron: '0 21 * * 0'
   workflow_dispatch:
@@ -29,31 +28,18 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     outputs:
-      # A JSON array of matrix entries, or "[]" when this run should do nothing.
+      # A JSON array of matrix entries, one per package to process.
       packages: ${{ steps.plan.outputs.packages }}
     steps:
       - name: Decide which packages to process
         id: plan
         env:
-          EVENT_NAME: ${{ github.event_name }}
           INPUT_PACKAGE: ${{ inputs.package }}
         run: |
           set -euo pipefail
 
           EMBED='{"package":"embed","tag_prefix":"embed"}'
           ANNOTATION='{"package":"embed_annotation","tag_prefix":"anno"}'
-
-          # The cron fires weekly, but releases are prepared biweekly. 20716 is the
-          # UTC day number of 2026-09-20, the date of the first intended firing, so
-          # every other firing lands on a multiple of 14 days after it.
-          if [ "$EVENT_NAME" = "schedule" ]; then
-            DAY=$(( $(date -u +%s) / 86400 ))
-            if [ $(( (DAY - 20716) % 14 )) -ne 0 ]; then
-              echo "Off-week firing. Nothing to do."
-              echo "packages=[]" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-          fi
 
           case "${INPUT_PACKAGE:-all}" in
             embed)            PACKAGES="[$EMBED]" ;;
@@ -67,7 +53,6 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     needs: plan
-    if: needs.plan.outputs.packages != '[]'
     strategy:
       fail-fast: false
       matrix:
