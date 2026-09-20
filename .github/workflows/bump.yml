@@ -12,51 +12,18 @@ on:
   schedule:
     - cron: '0 21 * * 0'
   workflow_dispatch:
-    inputs:
-      package:
-        description: Package to prepare a release pull request for
-        type: choice
-        default: all
-        options: [all, embed, embed_annotation]
-      bump_type:
-        description: Which part of the version number to increment
-        type: choice
-        default: patch
-        options: [patch, minor, major]
 
 jobs:
-  plan:
-    runs-on: ubuntu-latest
-    outputs:
-      # A JSON array of matrix entries, one per package to process.
-      packages: ${{ steps.plan.outputs.packages }}
-    steps:
-      - name: Decide which packages to process
-        id: plan
-        env:
-          INPUT_PACKAGE: ${{ inputs.package }}
-        run: |
-          set -euo pipefail
-
-          EMBED='{"package":"embed","tag_prefix":"embed"}'
-          ANNOTATION='{"package":"embed_annotation","tag_prefix":"anno"}'
-
-          case "${INPUT_PACKAGE:-all}" in
-            embed)            PACKAGES="[$EMBED]" ;;
-            embed_annotation) PACKAGES="[$ANNOTATION]" ;;
-            *)                PACKAGES="[$EMBED,$ANNOTATION]" ;;
-          esac
-
-          echo "Packages: $PACKAGES"
-          echo "packages=$PACKAGES" >> "$GITHUB_OUTPUT"
-
   bump:
     runs-on: ubuntu-latest
-    needs: plan
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+        include:
+          - package: embed
+            tag_prefix: embed
+          - package: embed_annotation
+            tag_prefix: anno
 
     steps:
       - name: Checkout repository
@@ -86,7 +53,6 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PKG: ${{ matrix.package }}
           TAG_PREFIX: ${{ matrix.tag_prefix }}
-          BUMP_TYPE: ${{ inputs.bump_type || 'patch' }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: |
           set -euo pipefail
@@ -117,7 +83,7 @@ jobs:
           echo "Release notes:"
           cat "$RUNNER_TEMP/notes.md"
 
-          (cd "$PKG" && dart pub bump "$BUMP_TYPE")
+          (cd "$PKG" && dart pub bump patch)
           NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
           BRANCH="release/${TAG_PREFIX}-v${NEW_VERSION}"
 
