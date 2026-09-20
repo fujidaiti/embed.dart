@@ -35,22 +35,9 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
-          private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
-
-      - name: Bump version and update changelog
-        id: prepare
+      - name: List unreleased commits
+        id: commits
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PKG: ${{ matrix.package }}
           TAG_PREFIX: ${{ matrix.tag_prefix }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
@@ -70,7 +57,7 @@ jobs:
           COMMITS="$(git log --format='%s' "${LATEST_TAG}..HEAD" -- "${PKG}/")"
           if [ -z "$COMMITS" ]; then
             echo "No unreleased commits for ${PKG}. Skipping."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -83,16 +70,66 @@ jobs:
           echo "Release notes:"
           cat "$RUNNER_TEMP/notes.md"
 
-          (cd "$PKG" && dart pub bump patch)
-          NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
-          BRANCH="release/${TAG_PREFIX}-v${NEW_VERSION}"
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
 
-          # Do not open a second pull request while a previous one is still open.
-          if [ -n "$(gh pr list --state open --head "$BRANCH" --json number --jq '.[].number')" ]; then
-            echo "Pull request for ${BRANCH} is already open. Skipping."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+      - name: Generate GitHub App token
+        if: steps.commits.outputs.proceed == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Check for an open release pull request
+        if: steps.commits.outputs.proceed == 'true'
+        id: open-pr
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
+        run: |
+          set -euo pipefail
+
+          # Do not open a second pull request for this package while a previous
+          # one is still waiting to be merged.
+          EXISTING="$(gh pr list --state open --base master --json headRefName \
+            --jq "[.[] | select(.headRefName | startswith(\"release/${TAG_PREFIX}-v\"))] | .[0].headRefName // empty")"
+          if [ -n "$EXISTING" ]; then
+            echo "Pull request for ${EXISTING} is already open. Skipping."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Dart SDK
+        if: steps.open-pr.outputs.proceed == 'true'
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Bump the patch version
+        if: steps.open-pr.outputs.proceed == 'true'
+        id: bump
+        env:
+          PKG: ${{ matrix.package }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
+        run: |
+          set -euo pipefail
+
+          (cd "$PKG" && dart pub bump patch)
+          NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
+          echo "New version of ${PKG}: ${NEW_VERSION}"
+
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=release/${TAG_PREFIX}-v${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Update the changelog
+        if: steps.open-pr.outputs.proceed == 'true'
+        env:
+          PKG: ${{ matrix.package }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+        run: |
+          set -euo pipefail
 
           # Prepend the new section, keeping the existing "# CHANGELOG" header.
           {
@@ -105,24 +142,20 @@ jobs:
           } > "$RUNNER_TEMP/changelog.md"
           mv "$RUNNER_TEMP/changelog.md" "${PKG}/CHANGELOG.md"
 
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
-
       - name: Get bot user id
-        if: steps.prepare.outputs.has_changes == 'true'
+        if: steps.open-pr.outputs.proceed == 'true'
         id: bot-user-id
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
 
       - name: Create pull request
-        if: steps.prepare.outputs.has_changes == 'true'
+        if: steps.open-pr.outputs.proceed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PKG: ${{ matrix.package }}
-          NEW_VERSION: ${{ steps.prepare.outputs.new_version }}
-          BRANCH: ${{ steps.prepare.outputs.branch }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+          BRANCH: ${{ steps.bump.outputs.branch }}
           APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
           BOT_USER_ID: ${{ steps.bot-user-id.outputs.user-id }}
         run: |
