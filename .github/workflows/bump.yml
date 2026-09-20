@@ -40,7 +40,6 @@ jobs:
         env:
           PKG: ${{ matrix.package }}
           TAG_PREFIX: ${{ matrix.tag_prefix }}
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: |
           set -euo pipefail
 
@@ -54,19 +53,12 @@ jobs:
           # Only commits that touched the package directory count as unreleased
           # changes. The tag itself points at the previous bump commit, so that
           # commit is excluded by the range.
-          COMMITS="$(git log --format='%s' "${LATEST_TAG}..HEAD" -- "${PKG}/")"
-          if [ -z "$COMMITS" ]; then
+          git log --format='- %s' "${LATEST_TAG}..HEAD" -- "${PKG}/" > "$RUNNER_TEMP/notes.md"
+          if [ ! -s "$RUNNER_TEMP/notes.md" ]; then
             echo "No unreleased commits for ${PKG}. Skipping."
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
-          # Squash-merged commit subjects end with "(#123)". Turn that suffix into
-          # a link to the pull request; subjects without it are listed as is.
-          echo "$COMMITS" | sed -E \
-            -e 's|^|- |' \
-            -e "s| \(#([0-9]+)\)\$| ([#\1](${REPO_URL}/pull/\1))|" \
-            > "$RUNNER_TEMP/notes.md"
           echo "Release notes:"
           cat "$RUNNER_TEMP/notes.md"
 
