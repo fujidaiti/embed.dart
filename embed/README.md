@@ -408,9 +408,7 @@ const _$pubspecMap = {"name": "ExampleApp", "publishTo": "none", "version": ... 
 
 ### I edited my json file to embed, but the generated code doesn't update even when I run build_runner again
 
-From v1.7.0, _embed_ reads the file to be embedded through the `build_runner` API, which registers it as an input of the code generation. `build_runner` then regenerates the Dart code whenever the file content changes, in both `build` and `watch` mode. No manual step is required.
-
-If the generated code is still not updated, the file is probably not tracked by `build_runner`. See [Which files can be tracked?](#which-files-can-be-tracked) for the conditions and how to fix it. As a last resort, remove the cache before running the `build_runner` as follows (replace `flutter` with `dart` if you are working in a Dart project):
+The file is probably not tracked by `build_runner`. See [Which files can be tracked?](#which-files-can-be-tracked) for the conditions and how to fix it. As a last resort, remove the cache before running the `build_runner` as follows (replace `flutter` with `dart` if you are working in a Dart project):
 
 ```shell
 flutter pub run build_runner clean && flutter pub run build_runner build
@@ -426,12 +424,7 @@ flutter clean && flutter pub run build_runner build
 
 ### Which files can be tracked?
 
-`build_runner` can only track a file that is part of its source set. A file is tracked if both of the following are true:
-
-1. The file is inside the package root directory. A file outside of it, such as `../../shared/config.json`, cannot be tracked.
-2. The file matches one of the source globs of the build target. By default these are `assets/**`, `benchmark/**`, `bin/**`, `example/**`, `lib/**`, `test/**`, `integration_test/**`, `tool/**`, `web/**`, `node/**`, `pubspec.yaml`, and a few others.
-
-Files that do not meet these conditions are still embedded correctly, but the generated code is not updated when their content changes.
+`build_runner` can only track a file that is part of its source set. The default set includes well-known locations such as `lib/**` and `assets/**`. Files outside these directories are still embedded correctly, but the generated code is not updated when their content changes.
 
 If your files are in a directory that is not covered by the default globs, add it to the `sources` of the default build target in `build.yaml`. Please note that specifying `sources` replaces the default list instead of extending it, so the directories you rely on must all be listed:
 
@@ -446,7 +439,7 @@ targets:
       - $package$
 ```
 
-See [How can I include additional sources in my build?](https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build) in the `build_config` documentation for more details. The [example package](https://github.com/fujidaiti/embed.dart/blob/master/example/build.yaml) uses this configuration.
+See [How can I include additional sources in my build?](https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build) for more details.
 
 <br/>
 
