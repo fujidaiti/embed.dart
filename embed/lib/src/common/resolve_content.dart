@@ -30,11 +30,20 @@ Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
   const doc =
       'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build';
 
-  log.warning(
-    "'$path' is outside the package root directory, so build_runner "
-    'cannot track it. The generated code will not be updated when the '
-    'content of the file changes. See $doc for more details.',
-  );
+  if (assetId == null) {
+    log.warning(
+      "'$path' is outside the package root directory, so build_runner "
+      'cannot track it. The generated code will not be updated when the '
+      'content of the file changes. See $doc for more details.',
+    );
+  } else {
+    log.warning(
+      "'$path' is not included in the build sources, so build_runner "
+      'cannot track it. The generated code will not be updated when the '
+      'content of the file changes. Add its directory to `sources` in '
+      'build.yaml. See $doc for more details.',
+    );
+  }
 
   return EmbeddedContent.file(content);
 }

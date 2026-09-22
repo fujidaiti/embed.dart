@@ -74,9 +74,10 @@ const embedded = _$embedded;
     expect(
       logs,
       contains(endsWith(
-        "'/pubspec.yaml' is outside the package root directory, so "
+        "'/pubspec.yaml' is not included in the build sources, so "
         'build_runner cannot track it. The generated code will not be updated '
-        'when the content of the file changes. See '
+        'when the content of the file changes. Add its directory to `sources` '
+        'in build.yaml. See '
         'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build '
         'for more details.',
       )),
