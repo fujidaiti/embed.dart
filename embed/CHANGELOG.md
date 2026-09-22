@@ -2,8 +2,8 @@
 
 ## 1.7.0
 
-- Regenerate the code when the content of an embedded file changes. ([#53])
-  - See [this guide][#53-guide] for more details.
+- Regenerate code when embedded file content changes ([#53])
+  - See [this guide][#53-guide] for more details
 - Fix embedded file paths being resolved against the workspace root directory
   instead of the package root directory in a pub workspace ([#55])
 
