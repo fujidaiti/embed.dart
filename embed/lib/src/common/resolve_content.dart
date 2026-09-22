@@ -26,9 +26,6 @@ typedef InputSourceFilePathProvider = String Function();
 
 /// Get the absolute path to the root directory of [package].
 ///
-/// The result is cached, since otherwise `package_config.json` would be read
-/// and parsed once per annotation.
-///
 /// Falls back to [p.current] when [package] is not listed in
 /// `package_config.json`. This is the case with `testBuilder` from
 /// `package:build_test`, which builds a synthetic package.
@@ -48,7 +45,7 @@ String? _lookUpPackageRoot(String package) {
   for (final entry in config['packages']! as List<Object?>) {
     final map = entry! as Map<String, Object?>;
     if (map['name'] != package) continue;
-    // `rootUri` is resolved against the `package_config.json` file itself.
+    // For local packages, rootUri is relative to the package_config.json.
     final rootUri = configUri.resolve(map['rootUri']! as String);
     if (rootUri.scheme != 'file') return null;
     return p.canonicalize(rootUri.toFilePath());
