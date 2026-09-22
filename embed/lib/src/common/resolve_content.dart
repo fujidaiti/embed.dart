@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:build/build.dart';
 import 'package:embed/src/common/embedded_content.dart';
@@ -17,9 +19,12 @@ const _additionalSourcesUrl =
 /// warning is logged, because `build_runner` cannot detect changes to a file
 /// that it does not read as an asset.
 Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
-  final resolvedPath = resolvePath(path, () => buildStep.inputId.path);
+  final package = buildStep.inputId.package;
+  final packageRoot = packageRootOf(package);
+  final resolvedPath =
+      resolvePath(path, () => buildStep.inputId.path, packageRoot);
 
-  final assetId = resolveAssetId(resolvedPath, buildStep.inputId.package);
+  final assetId = resolveAssetId(resolvedPath, package, packageRoot);
   if (assetId != null && await buildStep.canRead(assetId)) {
     return EmbeddedContent.asset(assetId, buildStep);
   }
@@ -54,12 +59,15 @@ Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
 
 /// Convert [absolutePath] into an [AssetId] of [package].
 ///
-/// Returns `null` if the file is outside the package root directory, since
-/// such a file cannot be represented as an [AssetId].
-///
-/// This function assumes that `build_runner` is run in the package root.
-AssetId? resolveAssetId(String absolutePath, String package) {
-  final relativePath = p.relative(absolutePath, from: p.current);
+/// Returns `null` if the file is outside [packageRoot], the absolute path to
+/// the root directory of [package], since such a file cannot be represented
+/// as an [AssetId].
+AssetId? resolveAssetId(
+  String absolutePath,
+  String package,
+  String packageRoot,
+) {
+  final relativePath = p.relative(absolutePath, from: packageRoot);
   if (p.isAbsolute(relativePath) || p.split(relativePath).first == '..') {
     return null;
   }
@@ -72,6 +80,35 @@ AssetId? resolveAssetId(String absolutePath, String package) {
 /// directory.
 typedef InputSourceFilePathProvider = String Function();
 
+/// Get the absolute path to the root directory of [package].
+///
+/// Falls back to [p.current] when [package] is not listed in
+/// `package_config.json`. This is the case with `testBuilder` from
+/// `package:build_test`, which builds a synthetic package.
+String packageRootOf(String package) =>
+    _packageRoots[package] ??= _lookUpPackageRoot(package) ?? p.current;
+
+final _packageRoots = <String, String>{};
+
+String? _lookUpPackageRoot(String package) {
+  final configUri = Isolate.packageConfigSync;
+  if (configUri == null || configUri.scheme != 'file') return null;
+  final configFile = File.fromUri(configUri);
+  if (!configFile.existsSync()) return null;
+
+  final config =
+      jsonDecode(configFile.readAsStringSync()) as Map<String, Object?>;
+  for (final entry in config['packages']! as List<Object?>) {
+    final map = entry! as Map<String, Object?>;
+    if (map['name'] != package) continue;
+    // For local packages, rootUri is relative to the package_config.json.
+    final rootUri = configUri.resolve(map['rootUri']! as String);
+    if (rootUri.scheme != 'file') return null;
+    return p.canonicalize(rootUri.toFilePath());
+  }
+  return null;
+}
+
 /// Convert the given file [path] to an absolute path.
 ///
 /// If [path] is a relative path, this function assumes that [path] is
@@ -79,12 +116,21 @@ typedef InputSourceFilePathProvider = String Function();
 ///
 /// if [path] is an absolute path, it is treated as relative
 /// to the package root directory.
-String resolvePath(String path, InputSourceFilePathProvider source) {
+///
+/// [packageRoot] must be the absolute path to the root directory of the
+/// package that owns the [source] file. It cannot be assumed to be the current
+/// working directory, because `build_runner` runs in the workspace root
+/// directory when it is started there in a pub workspace.
+String resolvePath(
+  String path,
+  InputSourceFilePathProvider source,
+  String packageRoot,
+) {
   final resolved = switch (p.isAbsolute(path)) {
-    true => changeRootDirectory(path, p.current),
+    true => changeRootDirectory(path, packageRoot),
     false => resolvePathRelativeToSource(
         relativePath: path,
-        absoluteSourcePath: absoluteInputSourceFilePath(source),
+        absoluteSourcePath: p.join(packageRoot, source()),
       ),
   };
   return p.canonicalize(resolved);
@@ -100,15 +146,6 @@ String resolvePathRelativeToSource({
 }) {
   final sourceParent = p.dirname(absoluteSourcePath);
   return p.join(sourceParent, relativePath);
-}
-
-/// Get the absolute path to the input [source] file.
-///
-/// This function assumes that `build_runner` is run in the package root.
-String absoluteInputSourceFilePath(InputSourceFilePathProvider source) {
-  final packageDir = p.current;
-  final relativeSourcePath = source();
-  return p.join(packageDir, relativeSourcePath);
 }
 
 /// Change the root directory of [path] to [newRoot].
