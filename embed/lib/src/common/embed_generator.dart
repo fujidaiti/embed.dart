@@ -2,10 +2,10 @@
 // source_gen
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed/src/common/resolve_content.dart' as r;
 import 'package:embed_annotation/embed_annotation.dart';
@@ -36,20 +36,14 @@ abstract class EmbeddingGenerator<E extends Embed>
     BuildStep buildStep,
   ) async {
     final embedder = createEmbedderFrom(annotation);
-    final content = resolveContent(embedder.config, buildStep);
+    final content = await resolveContent(embedder.config, buildStep);
     final variable = '_\$${element.name}';
     final embedding = await embedder.getEmbeddingOf(content, element);
     return 'const $variable = $embedding;';
   }
 
-  File resolveContent(E config, BuildStep buildStep) {
-    String inputSourceFilePath() => buildStep.inputId.path;
-    return r.resolveContent(
-      config.path,
-      inputSourceFilePath,
-      r.packageRootOf(buildStep.inputId.package),
-    );
-  }
+  Future<EmbeddedContent> resolveContent(E config, BuildStep buildStep) =>
+      r.resolveContent(config.path, buildStep);
 
   Embedder<E> createEmbedderFrom(ConstantReader annotation);
 }

@@ -2,27 +2,67 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:build/build.dart' show BuildStep;
+import 'package:build/build.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
-File resolveContent(
-  String path,
-  InputSourceFilePathProvider source,
-  String packageRoot,
-) {
-  final resolvedPath = resolvePath(path, source, packageRoot);
+/// Resolve the file at [path] into an [EmbeddedContent].
+///
+/// The file is read through [buildStep] whenever `build_runner` is able to
+/// read it as an asset, so that it is registered as an input of the current
+/// build step. Otherwise, the file is read directly with `dart:io`.
+Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
+  final package = buildStep.inputId.package;
+  final packageRoot = packageRootOf(package);
+  final resolvedPath = resolvePath(path, buildStep.inputId.path, packageRoot);
+
+  final assetId = resolveAssetId(resolvedPath, package, packageRoot);
+  if (assetId != null && await buildStep.canRead(assetId)) {
+    return EmbeddedContent.asset(assetId, buildStep);
+  }
+
   final content = File(resolvedPath);
-  return switch (content.existsSync()) {
-    true => content,
-    false => throw UsageError('No such file exists: $path'),
-  };
+  if (!content.existsSync()) {
+    throw UsageError('No such file exists: $path');
+  }
+
+  const doc =
+      'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build';
+
+  if (assetId == null) {
+    log.warning(
+      "'$path' is outside the package root directory, so build_runner "
+      'cannot track it. The generated code will not be updated when the '
+      'content of the file changes. See $doc for more details.',
+    );
+  } else {
+    log.warning(
+      "'$path' is not included in the build sources, so build_runner "
+      'cannot track it. The generated code will not be updated when the '
+      'content of the file changes. Add its directory to `sources` in '
+      'build.yaml. See $doc for more details.',
+    );
+  }
+
+  return EmbeddedContent.file(content);
 }
 
-/// Signature of a callback that returns the path of the input source file
-/// associated with the current [BuildStep], relative to the package root
-/// directory.
-typedef InputSourceFilePathProvider = String Function();
+/// Convert [absolutePath] into an [AssetId] of [package].
+///
+/// Returns `null` if the file is outside [packageRoot], since such a file
+/// cannot be represented as an [AssetId].
+AssetId? resolveAssetId(
+  String absolutePath,
+  String package,
+  String packageRoot,
+) {
+  final relativePath = p.relative(absolutePath, from: packageRoot);
+  if (p.isAbsolute(relativePath) || p.split(relativePath).first == '..') {
+    return null;
+  }
+  return AssetId(package, relativePath);
+}
 
 /// Get the absolute path to the root directory of [package].
 ///
@@ -65,16 +105,12 @@ String? _lookUpPackageRoot(String package) {
 /// package that owns the [source] file. It cannot be assumed to be the current
 /// working directory, because `build_runner` runs in the workspace root
 /// directory when it is started there in a pub workspace.
-String resolvePath(
-  String path,
-  InputSourceFilePathProvider source,
-  String packageRoot,
-) {
+String resolvePath(String path, String source, String packageRoot) {
   final resolved = switch (p.isAbsolute(path)) {
     true => changeRootDirectory(path, packageRoot),
     false => resolvePathRelativeToSource(
         relativePath: path,
-        absoluteSourcePath: p.join(packageRoot, source()),
+        absoluteSourcePath: p.join(packageRoot, source),
       ),
   };
   return p.canonicalize(resolved);
