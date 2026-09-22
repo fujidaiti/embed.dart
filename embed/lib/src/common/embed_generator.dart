@@ -44,7 +44,11 @@ abstract class EmbeddingGenerator<E extends Embed>
 
   File resolveContent(E config, BuildStep buildStep) {
     String inputSourceFilePath() => buildStep.inputId.path;
-    return r.resolveContent(config.path, inputSourceFilePath);
+    return r.resolveContent(
+      config.path,
+      inputSourceFilePath,
+      r.packageRootOf(buildStep.inputId.package),
+    );
   }
 
   Embedder<E> createEmbedderFrom(ConstantReader annotation);
