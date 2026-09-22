@@ -7,10 +7,6 @@ import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/errors.dart';
 import 'package:path/path.dart' as p;
 
-/// Documentation on how to declare additional sources in `build.yaml`.
-const _additionalSourcesUrl =
-    'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build';
-
 /// Resolve the file at [path] into an [EmbeddedContent].
 ///
 /// The file is read through [buildStep] whenever `build_runner` is able to
@@ -31,10 +27,13 @@ Future<EmbeddedContent> resolveContent(String path, BuildStep buildStep) async {
     throw UsageError('No such file exists: $path');
   }
 
+  const doc =
+      'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build';
+
   log.warning(
     "'$path' is outside the package root directory, so build_runner "
     'cannot track it. The generated code will not be updated when the '
-    'content of the file changes.',
+    'content of the file changes. See $doc for more details.',
   );
 
   return EmbeddedContent.file(content);
