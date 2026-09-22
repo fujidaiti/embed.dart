@@ -35,7 +35,7 @@ const embedded = _$embedded;
       },
       outputs: {
         'a|lib/example.embed.g.part': decodedMatches(
-          contains(r"const _$embedded = r'''\nHello, embed!\n'''"),
+          contains("const _\$embedded = r'''\nHello, embed!\n'''"),
         ),
       },
       onLog: (_) {},
@@ -48,34 +48,38 @@ const embedded = _$embedded;
     );
   });
 
-  test('files outside lib should not be tracked by default', () async {
-    final readerWriter = TestReaderWriter(rootPackage: 'a');
+  test('warn if untrackable file is embedded', () async {
+    final logs = <String>[];
 
     await testBuilder(
       builder,
       {
         ...annotationAsset,
-        'a|data/text.txt': 'This file lives outside lib',
         'a|lib/example.dart': r'''
 import 'package:embed_annotation/embed_annotation.dart';
 
 part 'example.g.dart';
 
-@EmbedStr('../data/text.txt')
+@EmbedStr('/pubspec.yaml')
 const embedded = _$embedded;
 ''',
       },
       outputs: {
         'a|lib/example.embed.g.part': decodedMatches(contains(
-            r"const _$embedded = r'''\nThis file lives outside lib\n'''")),
+            'repository: https://github.com/fujidaiti/embed.dart.git')),
       },
-      onLog: (_) {},
-      readerWriter: readerWriter,
+      onLog: (record) => logs.add(record.message),
     );
 
     expect(
-      readerWriter.testing.inputsTracked,
-      isNot(contains(AssetId('a', 'data/text.txt'))),
+      logs,
+      contains(endsWith(
+        "'/pubspec.yaml' is outside the package root directory, so "
+        'build_runner cannot track it. The generated code will not be updated '
+        'when the content of the file changes. See '
+        'https://pub.dev/packages/build_config#how-can-i-include-additional-sources-in-my-build '
+        'for more details.',
+      )),
     );
   });
 }
