@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased
+
+- Fix embedded file paths being resolved against the workspace root directory
+  instead of the package root directory in a pub workspace ([#55])
+
+[#55]: https://github.com/fujidaiti/embed.dart/issues/55
+
 ## 1.6.7
 
 - Support analyzer v14
