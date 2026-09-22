@@ -2,10 +2,12 @@
 
 ## 1.7.0
 
-- Regenerate the code when the content of an embedded file changes ([#53](https://github.com/fujidaiti/embed.dart/pull/53))
+- Regenerate the code when the content of an embedded file changes. See [this guide][#53-guide] for more details. ([#53])
 - Fix embedded file paths being resolved against the workspace root directory
   instead of the package root directory in a pub workspace ([#55])
 
+[#53]: https://github.com/fujidaiti/embed.dart/pull/53
+[#53-guide]: https://github.com/fujidaiti/embed.dart/blob/master/embed/README.md#i-edited-my-json-file-to-embed-but-the-generated-code-doesnt-update-even-when-i-run-build_runner-again
 [#55]: https://github.com/fujidaiti/embed.dart/issues/55
 
 ## 1.6.7
