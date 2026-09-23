@@ -1,0 +1,84 @@
+# Creates a tag and a GitHub Release when a version bump lands on master.
+#
+# Triggered by pushes to master that touch a package pubspec.yaml. For each
+# package, the version in the current commit is compared against the version in
+# the previous commit. If it changed, a `<prefix>-v<version>` tag and a GitHub
+# Release are created at the pushed commit.
+#
+# The tag triggers publish.yml.
+name: Create Release
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'embed/pubspec.yaml'
+      - 'embed_annotation/pubspec.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: embed
+            tag_prefix: embed
+          - package: embed_annotation
+            tag_prefix: anno
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Two commits are enough to compare pubspec.yaml with its previous state.
+          fetch-depth: 2
+
+      - name: Detect version change
+        id: detect
+        env:
+          PKG: ${{ matrix.package }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          NEW="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
+          OLD="$(git show "${BEFORE_SHA}:${PKG}/pubspec.yaml" 2>/dev/null | sed -n 's/^version: //p' || echo "")"
+          echo "${PKG}: ${OLD:-<none>} -> ${NEW}"
+
+          if [ "$OLD" = "$NEW" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=${NEW}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate GitHub App token
+        if: steps.detect.outputs.changed == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Create GitHub Release
+        if: steps.detect.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PKG: ${{ matrix.package }}
+          TAG: ${{ matrix.tag_prefix }}-v${{ steps.detect.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          # The release body is the topmost section of the changelog, without its
+          # own heading, since GitHub renders the release title separately.
+          awk '/^## /{ n++; next } n == 1' "${PKG}/CHANGELOG.md" > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --target "$GITHUB_SHA"

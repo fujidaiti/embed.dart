@@ -1,0 +1,178 @@
+# Opens a release pull request for each package that has unreleased commits.
+#
+# The `plan` job selects the packages whose directory received commits after
+# their latest `<prefix>-v*` tag. The `bump` job then runs once per selected
+# package: it bumps the version in pubspec.yaml and prepends a new section to
+# CHANGELOG.md listing those commits.
+#
+# Merging the resulting pull request triggers release.yml.
+name: Prepare Release PR
+
+on:
+  # 21:00 UTC on Sunday is 06:00 JST on Monday.
+  schedule:
+    - cron: '0 21 * * 0'
+  workflow_dispatch:
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      # A JSON array of matrix entries, one per package that has unreleased
+      # commits, or "[]" when there is nothing to release.
+      packages: ${{ steps.plan.outputs.packages }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          # The full history and all tags are needed to find the latest release
+          # tag and to list the commits made since then.
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Select packages with unreleased commits
+        id: plan
+        run: |
+          set -euo pipefail
+
+          PACKAGES='[]'
+          for ENTRY in 'embed:embed' 'embed_annotation:anno'; do
+            PKG="${ENTRY%%:*}"
+            TAG_PREFIX="${ENTRY##*:}"
+
+            LATEST_TAG="$(git tag --list "${TAG_PREFIX}-v*" --sort=-v:refname | head -n1)"
+            if [ -z "$LATEST_TAG" ]; then
+              echo "::error::No ${TAG_PREFIX}-v* tag exists. Create the initial tag before running this workflow."
+              exit 1
+            fi
+
+            # Only commits that touched the package directory count as unreleased
+            # changes. The tag itself points at the previous bump commit, so that
+            # commit is excluded by the range.
+            if [ -z "$(git log --format='%s' "${LATEST_TAG}..HEAD" -- "${PKG}/")" ]; then
+              echo "${PKG}: no commits since ${LATEST_TAG}. Skipping."
+              continue
+            fi
+
+            echo "${PKG}: has commits since ${LATEST_TAG}."
+            PACKAGES="$(echo "$PACKAGES" | jq -c \
+              --arg package "$PKG" \
+              --arg tag_prefix "$TAG_PREFIX" \
+              --arg latest_tag "$LATEST_TAG" \
+              '. + [{ package: $package, tag_prefix: $tag_prefix, latest_tag: $latest_tag }]')"
+          done
+
+          echo "Packages: ${PACKAGES}"
+          echo "packages=${PACKAGES}" >> "$GITHUB_OUTPUT"
+
+  bump:
+    runs-on: ubuntu-latest
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Collect release notes
+        env:
+          PKG: ${{ matrix.package }}
+          LATEST_TAG: ${{ matrix.latest_tag }}
+        run: |
+          set -euo pipefail
+
+          git log --format='- %s' "${LATEST_TAG}..HEAD" -- "${PKG}/" > "$RUNNER_TEMP/notes.md"
+          echo "Release notes:"
+          cat "$RUNNER_TEMP/notes.md"
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.NORELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.NORELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Bump the patch version
+        id: bump
+        env:
+          PKG: ${{ matrix.package }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
+        run: |
+          set -euo pipefail
+
+          (cd "$PKG" && dart pub bump patch)
+          NEW_VERSION="$(sed -n 's/^version: //p' "${PKG}/pubspec.yaml")"
+          echo "New version of ${PKG}: ${NEW_VERSION}"
+
+          # The timestamp suffix keeps every run on its own branch, so a run never
+          # collides with the branch of an earlier release pull request.
+          BRANCH="release/${TAG_PREFIX}-v${NEW_VERSION}-$(date -u +%Y%m%d%H%M%S)"
+          echo "Branch: ${BRANCH}"
+
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Update the changelog
+        env:
+          PKG: ${{ matrix.package }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+        run: |
+          set -euo pipefail
+
+          # Prepend the new section, keeping the existing "# CHANGELOG" header.
+          {
+            echo "# CHANGELOG"
+            echo
+            echo "## ${NEW_VERSION}"
+            echo
+            cat "$RUNNER_TEMP/notes.md"
+            tail -n +2 "${PKG}/CHANGELOG.md"
+          } > "$RUNNER_TEMP/changelog.md"
+          mv "$RUNNER_TEMP/changelog.md" "${PKG}/CHANGELOG.md"
+
+      - name: Get bot user id
+        id: bot-user-id
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PKG: ${{ matrix.package }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+          BRANCH: ${{ steps.bump.outputs.branch }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+          BOT_USER_ID: ${{ steps.bot-user-id.outputs.user-id }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add "${PKG}/pubspec.yaml" "${PKG}/CHANGELOG.md"
+          git commit -m "Bump ${PKG} to ${NEW_VERSION}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "Bump ${PKG} to ${NEW_VERSION}" \
+            --body-file "$RUNNER_TEMP/notes.md" \
+            --reviewer "${{ github.repository_owner }}"

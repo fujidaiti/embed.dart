@@ -1,0 +1,55 @@
+# Publishes a package to pub.dev when its release tag is pushed.
+#
+# The package name is derived from the tag: `embed-v1.6.8` publishes `embed` and
+# `anno-v1.2.4` publishes `embed_annotation`.
+#
+# Authentication uses pub.dev automated publishing over OIDC, so no credentials
+# are stored in this repository. Each package must have automated publishing
+# enabled on pub.dev with the matching tag pattern.
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'embed-v[0-9]+.[0-9]+.[0-9]+*'
+      - 'anno-v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      # Required to request the OIDC token that pub.dev verifies.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        # This action also provides the OIDC token used by `dart pub publish`.
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Resolve package from tag
+        id: resolve
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          case "${TAG%%-v*}" in
+            embed) PKG=embed ;;
+            anno)  PKG=embed_annotation ;;
+            *)
+              echo "::error::Unrecognized tag prefix: ${TAG}"
+              exit 1
+              ;;
+          esac
+
+          echo "Publishing ${PKG} from tag ${TAG}"
+          echo "package=${PKG}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to pub.dev
+        working-directory: ${{ steps.resolve.outputs.package }}
+        run: dart pub publish --force
