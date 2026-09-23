@@ -3,10 +3,10 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:embed/src/common/embedded_content.dart';
 import 'package:embed/src/common/embedder.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 
@@ -15,7 +15,7 @@ class BinaryEmbedder extends Embedder<EmbedBinary> {
 
   @override
   FutureOr<String> getEmbeddingOf(
-      File content, TopLevelVariableElement element) async {
+      EmbeddedContent content, TopLevelVariableElement element) async {
     final bytes = await content.readAsBytes();
     if (config.base64) {
       return _encodeBase64(bytes);

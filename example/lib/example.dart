@@ -5,21 +5,21 @@ part 'example.g.dart';
 
 // Use [EmbedStr] to embed the file content as a string literal.
 // You can specify the path as relative to the source file.
-@EmbedStr("data/text_to_embed.txt")
+@EmbedStr("../data/text_to_embed.txt")
 const embeddedText = _$embeddedText;
 
 // Any text content can be embedded as a string literal.
-@EmbedStr("data/json_to_embed.json")
+@EmbedStr("/data/json_to_embed.json")
 const embeddedJsonString = _$embeddedJsonString;
 
 // Use [EmbedLiteral] to embed a structured data as a dart object.
 // Currently, [EmbedLiteral] supports JSON, YAML and TOML files.
-@EmbedLiteral("data/json_to_embed.json")
+@EmbedLiteral("/data/json_to_embed.json")
 const embeddedJson = _$embeddedJson;
 
 // The code generator attempts to represent map-like data as records from Dart 3
 // rather than [Map]s whenever possible.
-@EmbedLiteral("data/toml_to_embed.toml")
+@EmbedLiteral("/data/toml_to_embed.toml")
 const embeddedToml = _$embeddedToml;
 
 // Absolute paths are treated as relative to the package root.
@@ -27,10 +27,10 @@ const embeddedToml = _$embeddedToml;
 @EmbedLiteral("/pubspec.yaml")
 const embeddedYaml = _$embeddedYaml;
 
-@EmbedBinary("data/binary_to_embed.png")
+@EmbedBinary("/data/binary_to_embed.png")
 const embeddedBinary = _$embeddedBinary;
 
-@EmbedBinary("data/binary_to_embed.png", base64: true)
+@EmbedBinary("/data/binary_to_embed.png", base64: true)
 const embeddedBinaryBase64 = _$embeddedBinaryBase64;
 
 void main() {

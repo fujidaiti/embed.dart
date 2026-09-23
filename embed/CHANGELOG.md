@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 1.7.0
+
+- Regenerate code when embedded file content changes ([#53])
+  - See [this guide][#53-guide] for more details
+- Fix embedded file paths being resolved against the workspace root directory
+  instead of the package root directory in a pub workspace ([#55])
+
+[#53]: https://github.com/fujidaiti/embed.dart/pull/53
+[#53-guide]: https://github.com/fujidaiti/embed.dart/blob/master/embed/README.md#which-files-can-be-tracked
+[#55]: https://github.com/fujidaiti/embed.dart/issues/55
+
 ## 1.6.7
 
 - Support analyzer v14

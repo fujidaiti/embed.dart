@@ -141,7 +141,3 @@ $RECYCLE.BIN/
 # VSCode related
 .vscode/
 .idea/
-
-# Generated files
-*.g.dart
-*.g.part
