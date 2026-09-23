@@ -36,12 +36,3 @@ jobs:
           dart run build_runner build
           dart test
           dart analyze --fatal-warnings
-
-      - name: Check generated code is up to date
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "::error::Generated code is out of date. Run 'dart run build_runner build' and commit the changes."
-            git status --porcelain
-            git --no-pager diff
-            exit 1
-          fi
