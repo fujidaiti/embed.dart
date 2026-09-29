@@ -2,7 +2,7 @@
 
 ## 1.7.1
 
-- Relax the analyzer constraint from `^14.1.0` to `^14.0.0` ([#51])
+- Relax the analyzer constraint from `^14.1.0` to `>=14.0.0 <15.0.0` ([#51])
 
 [#51]: https://github.com/fujidaiti/embed.dart/issues/51
 
